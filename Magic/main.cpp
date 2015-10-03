@@ -46,6 +46,10 @@ int main(int argc, char **argv) {
 		 0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
 	};
 
+	GLuint elements[] = {
+		0,1,2
+	};
+
 	GLuint defaultShader = Shader::loadDefaultShader();
 	glUseProgram(defaultShader);
 
@@ -57,6 +61,11 @@ int main(int argc, char **argv) {
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
 	GLint posAttrib = glGetAttribLocation(defaultShader, "a_position");
 	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float),0);
