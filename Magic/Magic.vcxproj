@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_include;C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_include\box2d;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_include;C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_include\box2d;C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_include\glm;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -13,21 +13,13 @@
 #include <sdl\SDL_ttf.h>
 #include <sdl\SDL_opengl.h>
 #include <Box2D\Box2D.h>
+#include <glm.hpp>
 
 #include "Shader.h"
 
 #include <stdio.h>
 #include <iostream>
 #include <tchar.h>
-
-
-#define DBOUT( s )            \
-{                             \
-   std::wostringstream os_;    \
-   os_ << s;                   \
-   OutputDebugStringW( os_.str().c_str() );  \
-}
-
 
 
 // TODO: reference additional headers your program requires here

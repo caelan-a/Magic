@@ -7,6 +7,7 @@ SDL_Window* window;
 SDL_GLContext context;
 
 void init() {
+	std::cout << "Initialising.." << std::endl;
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -32,6 +33,7 @@ void init() {
 		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
+	std::cout << "Initialised" << std::endl;
 }
 
 
@@ -39,13 +41,13 @@ int main(int argc, char **argv) {
 	init();
 
 	float vertices[] = {
-		-0.5f,  0.5f,
-		0.5f,  0.5f,
-		0.5f, -0.5f,
+		-0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+		 0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
 	};
 
-	GLuint shaderProgram = Shader::loadDefaultShader();
-	glUseProgram(shaderProgram);
+	GLuint defaultShader = Shader::loadDefaultShader();
+	glUseProgram(defaultShader);
 
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -56,10 +58,16 @@ int main(int argc, char **argv) {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	GLint posAttrib = glGetAttribLocation(defaultShader, "a_position");
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float),0);
 	glEnableVertexAttribArray(posAttrib);
 
+	GLint colAttrib = glGetAttribLocation(defaultShader, "a_color");
+	glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(2*sizeof(float)));
+	glEnableVertexAttribArray(colAttrib);
+
+	GLint u_time = glGetUniformLocation(defaultShader, "u_time");
+	float time = 0;
 
 	SDL_Event windowEvent;
 	while (true)
@@ -68,6 +76,10 @@ int main(int argc, char **argv) {
 		{
 			if (windowEvent.type == SDL_QUIT) break;
 		}
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		time += 0.1f;
+		glUniform1f(u_time, time);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
