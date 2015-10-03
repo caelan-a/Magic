@@ -56,12 +56,11 @@ GLuint Shader::createShaderProgram(GLuint vertexS, GLuint fragmentS) {
 GLuint Shader::loadShader(std::string vPath, std::string fPath) {
 	GLuint vShader = createShaderFromFile(GL_VERTEX_SHADER, vPath);
 	GLuint fShader = createShaderFromFile(GL_FRAGMENT_SHADER, fPath);
-
 	GLuint program = createShaderProgram(vShader, fShader);
 
 	return program;
 }
 
-GLuint Shader::loadDefaultShader() {
-	return loadShader("shaders/v_default.glsl", "shaders/f_default.glsl");
+void Shader::loadShaders() {
+	flat = loadShader("shaders/v_default.glsl", "shaders/f_default.glsl");
 }

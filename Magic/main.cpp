@@ -3,8 +3,47 @@
 
 #include "stdafx.h"
 
+//	Global Objects
 SDL_Window* window;
 SDL_GLContext context;
+SDL_Event windowEvent;
+
+bool quit = false;
+
+//	Protofunctions
+void init();
+void checkInput();
+void render();
+void cleanup();
+
+int main(int argc, char **argv) {
+	init();
+
+	while (!quit) {
+		checkInput();
+		render();
+	}
+
+	cleanup();
+
+	exit(EXIT_SUCCESS);
+}
+
+void render() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	Drawing::drawTexture(Drawing::tex_box, glm::vec3(1.0f,1.0f,1.0f), 1.0f);
+
+	SDL_GL_SwapWindow(window);
+}
+
+void checkInput() {
+	if (SDL_PollEvent(&windowEvent)) {
+		if (windowEvent.type == SDL_QUIT) {
+			quit = true;
+		}
+	}
+}
 
 void init() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -32,50 +71,15 @@ void init() {
 		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	Shader::loadShaders();
+	Drawing::loadSprites();
 }
 
-
-int main(int argc, char **argv) {
-	init();
-
-	float vertices[] = {
-		-0.5f,  0.5f,
-		0.5f,  0.5f,
-		0.5f, -0.5f,
-	};
-
-	GLuint shaderProgram = Shader::loadDefaultShader();
-	glUseProgram(shaderProgram);
-
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(posAttrib);
-
-
-	SDL_Event windowEvent;
-	while (true)
-	{
-		if (SDL_PollEvent(&windowEvent))
-		{
-			if (windowEvent.type == SDL_QUIT) break;
-		}
-
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		SDL_GL_SwapWindow(window);
-	}
-
+void cleanup() {
 	SDL_GL_DeleteContext(context);
 	SDL_Quit();
-	return 0;
 }
-
