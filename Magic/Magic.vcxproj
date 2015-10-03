@@ -71,11 +71,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_include;C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_include\box2d;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Caelan\Documents\Visual Studio 2015\Projects\Magic\Magic\3p_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include\box2d;C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include\glew;C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include\box2d;C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include;C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include\glew;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -95,6 +97,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glew32.lib;opengl32.lib;SDL2main.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,6 +111,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;SDL2.lib;SDL2main.lib;SDL2_Image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
