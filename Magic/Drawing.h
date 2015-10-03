@@ -1,12 +1,13 @@
 #pragma once
 
 namespace Drawing {
-	static GLuint vao_quad;
-	static GLuint tex_box;
+	const static int PIXELS_PER_METRE = 50;
 
-	GLuint createSurface(float vertices[], GLuint elements[]);
+	extern GLuint vao_surface;
+	extern GLuint tex_box;
+
 	GLuint loadTextureFile(std::string texturePath);
-	void loadQuad();
+	GLuint loadSurface();
 	void loadSprites();
-	void drawTexture(GLuint tex, glm::vec3 tint, float alpha);
+	void drawTexture(GLuint tex, float x, float y, float width, float height, glm::vec3 tint, float alpha);
 }

@@ -33,7 +33,7 @@
     <ClInclude Include="Drawing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
+    <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,12 +50,21 @@
     <ClCompile Include="Drawing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\v_default.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\f_default.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="v_test.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="f_test.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

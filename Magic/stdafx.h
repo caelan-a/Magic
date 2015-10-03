@@ -9,9 +9,8 @@
 
 //	Third party headers
 #include <glew\glew.h>
-#include <sdl\SDL.h>
-#include <sdl\SDL_opengl.h>
-#include <Box2D\Box2D.h>
+#include <glfw\glfw3.h>
+#include <gl\GL.h>
 #include <glm\glm.hpp>
 #include <glm\gtc\type_ptr.hpp>
 #include <SOIL.h>
@@ -27,6 +26,7 @@
 //	Local headers
 #include "Shader.h"
 #include "Drawing.h"
+#include "Entity.h"
 
 
 // TODO: reference additional headers your program requires here

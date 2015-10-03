@@ -3,12 +3,11 @@
 
 #include "stdafx.h"
 
-//	Global Objects
-SDL_Window* window;
-SDL_GLContext context;
-SDL_Event windowEvent;
+const static int SCREEN_WIDTH = 1920;
+const static int SCREEN_HEIGHT = 1080;
 
-bool quit = false;
+//	Global Objects
+GLFWwindow* window;
 
 //	Protofunctions
 void init();
@@ -16,70 +15,85 @@ void checkInput();
 void render();
 void cleanup();
 
+//	Entities
+Entity* player;
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+		std::cout << "w was pressed";
+}
+
 int main(int argc, char **argv) {
 	init();
 
-	while (!quit) {
-		checkInput();
+	Shader::loadShaders();
+	Drawing::loadSprites();
+
+	player = new Entity(Drawing::tex_box, 2.0f, 2.0f, 1.0f, 1.0f);
+
+	while (!glfwWindowShouldClose(window))
+	{
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, GL_TRUE);
+
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		render();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	cleanup();
-
 	exit(EXIT_SUCCESS);
 }
 
 void render() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	Drawing::drawTexture(Drawing::tex_box, glm::vec3(1.0f,1.0f,1.0f), 1.0f);
-
-	SDL_GL_SwapWindow(window);
-}
-
-void checkInput() {
-	if (SDL_PollEvent(&windowEvent)) {
-		if (windowEvent.type == SDL_QUIT) {
-			quit = true;
-		}
-	}
+	using namespace Drawing;
+	drawTexture(tex_box, 1.0f, 1.0f, 1.0f, 1.0f, glm::vec3(1.0f, 0.0f, 1.0f), 1.0f);
 }
 
 void init() {
-	SDL_Init(SDL_INIT_VIDEO);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	if (glfwInit() != GL_TRUE) {
+		std::cout << "Failed to initialise GLFW";
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
 
-	window = SDL_CreateWindow("Magic", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Magic", nullptr, nullptr); 
 	if (window == nullptr) {
 		std::cout << "Failed to create window";
-		SDL_Quit();
+		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 
-	context = SDL_GL_CreateContext(window);
-	if (context == NULL) {
-		std::cout << "Failed to create context";
-		SDL_Quit();
-		exit(EXIT_FAILURE);
-	}
+	glfwMakeContextCurrent(window);
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
 		std::cout << "Failed to initialise GLEW";
-		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
+
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Shader::loadShaders();
-	Drawing::loadSprites();
+	glfwSetKeyCallback(window, key_callback);
+	glfwSwapInterval(1);
 }
 
 void cleanup() {
-	SDL_GL_DeleteContext(context);
-	SDL_Quit();
+	delete(player);
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }

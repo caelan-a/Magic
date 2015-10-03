@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Shader.h"
 
+GLuint Shader::flat = 0;
+
 GLuint Shader::createShaderFromFile(int type, const std::string path) {
 	const char* source = nullptr;
 
@@ -39,9 +41,6 @@ GLuint Shader::createShaderFromFile(int type, const std::string path) {
 }
 
 GLuint Shader::createShaderProgram(GLuint vertexS, GLuint fragmentS) {
-	//std::string vstring = "#version 330\nin vec2 position;\nvoid main(){\ngl_Position=vec4(position,0.0,1.0);\n}";
-	//std::string fstring = "#version 330\nout vec4 outColor;\nvoid main(){\outColor=vec4(1.0,1.0,1.0,1.0);\n}";
-
 	GLuint shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexS);
 	glAttachShader(shaderProgram, fragmentS);
@@ -62,5 +61,5 @@ GLuint Shader::loadShader(std::string vPath, std::string fPath) {
 }
 
 void Shader::loadShaders() {
-	flat = loadShader("shaders/v_default.glsl", "shaders/f_default.glsl");
+	Shader::flat = loadShader("shaders/v_default.glsl", "shaders/f_default.glsl");
 }

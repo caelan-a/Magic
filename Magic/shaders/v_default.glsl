@@ -1,7 +1,9 @@
-#version 150
+#version 430
 
-in vec2 a_position;
-in vec2 a_texcoords;
+uniform mat4 u_MV;
+
+layout(location = 0) in vec2 a_position;
+layout(location = 1) in vec2 a_texcoords;
 
 out vec2 texcoords;
 
