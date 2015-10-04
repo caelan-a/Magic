@@ -153,13 +153,17 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Preferences.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -173,6 +177,9 @@
   <ItemGroup>
     <None Include="shaders\f_default.glsl" />
     <None Include="shaders\v_default.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Magic.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -28,13 +28,10 @@ GLuint Shader::createShaderFromFile(int type, const std::string path) {
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status != GL_TRUE) {
-		std::cout << "Error compiling vertex shader:\n";
-		char buffer[512];
-		glGetShaderInfoLog(shader, 512, NULL, buffer);
-		for (char c : buffer)
-			std::cout << c;
+		GLchar info[512];
+		glGetShaderInfoLog(shader, 512, NULL, info);
+		std::cout << "Error compiling: " + path + "\n" <<  info << std::endl;
 		glDeleteShader(shader);
-		//exit(EXIT_FAILURE);
 	}
 
 	return shader;
@@ -45,6 +42,14 @@ GLuint Shader::createShaderProgram(GLuint vertexS, GLuint fragmentS) {
 	glAttachShader(shaderProgram, vertexS);
 	glAttachShader(shaderProgram, fragmentS);
 	glLinkProgram(shaderProgram);
+
+	GLint success;
+	GLchar info[512];
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(shaderProgram, 512, NULL, info);
+		std::cout << "Failed linking shader program:\n" << info << std::endl;
+	}
 
 	glDeleteShader(vertexS);
 	glDeleteShader(fragmentS);
