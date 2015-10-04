@@ -26,7 +26,6 @@
 //	Local headers
 #include "Shader.h"
 #include "Drawing.h"
-#include "Entity.h"
 
 
 // TODO: reference additional headers your program requires here

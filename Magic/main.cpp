@@ -15,9 +15,6 @@ void checkInput();
 void render();
 void cleanup();
 
-//	Entities
-Entity* player;
-
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_W && action == GLFW_PRESS)
@@ -29,8 +26,6 @@ int main(int argc, char **argv) {
 
 	Shader::loadShaders();
 	Drawing::loadSprites();
-
-	player = new Entity(Drawing::tex_box, 2.0f, 2.0f, 1.0f, 1.0f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -93,7 +88,6 @@ void init() {
 }
 
 void cleanup() {
-	delete(player);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }

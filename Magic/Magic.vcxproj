@@ -161,7 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Drawing.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -172,10 +171,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="f_test.glsl" />
     <None Include="shaders\f_default.glsl" />
     <None Include="shaders\v_default.glsl" />
-    <None Include="v_test.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
