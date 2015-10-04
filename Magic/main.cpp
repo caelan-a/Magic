@@ -96,7 +96,7 @@ void init() {
 
 	getSystemInfo();
 
-	glViewport(0, 0, Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT);
+	//glViewport(0, 0, Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
