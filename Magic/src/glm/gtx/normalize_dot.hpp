@@ -24,42 +24,51 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 ///
-/// @ref gtc_integer
-/// @file glm/gtc/integer.inl
-/// @date 2014-11-17 / 2014-11-17
+/// @ref gtx_normalize_dot
+/// @file glm/gtx/normalize_dot.hpp
+/// @date 2007-09-28 / 2011-06-07
 /// @author Christophe Riccio
+///
+/// @see core (dependence)
+/// @see gtx_fast_square_root (dependence)
+///
+/// @defgroup gtx_normalize_dot GLM_GTX_normalize_dot
+/// @ingroup gtx
+/// 
+/// @brief Dot product of vectors that need to be normalize with a single square root.
+/// 
+/// <glm/gtx/normalized_dot.hpp> need to be included to use these functionalities.
 ///////////////////////////////////////////////////////////////////////////////////
 
-namespace glm{
-namespace detail
+#pragma once
+
+// Dependency:
+#include "../gtx/fast_square_root.hpp"
+
+#if(defined(GLM_MESSAGES) && !defined(GLM_EXT_INCLUDED))
+#	pragma message("GLM: GLM_GTX_normalize_dot extension included")
+#endif
+
+namespace glm
 {
-	template <typename T, precision P, template <class, precision> class vecType>
-	struct compute_log2<T, P, vecType, false>
-	{
-		GLM_FUNC_QUALIFIER static vecType<T, P> call(vecType<T, P> const & vec)
-		{
-			//Equivalent to return findMSB(vec); but save one function call in ASM with VC
-			//return findMSB(vec);
-			return vecType<T, P>(detail::compute_findMSB_vec<T, P, vecType, sizeof(T) * 8>::call(vec));
-		}
-	};
+	/// @addtogroup gtx_normalize_dot
+	/// @{
 
-#	if GLM_HAS_BITSCAN_WINDOWS
-		template <precision P>
-		struct compute_log2<int, P, tvec4, false>
-		{
-			GLM_FUNC_QUALIFIER static tvec4<int, P> call(tvec4<int, P> const & vec)
-			{
-				tvec4<int, P> Result(glm::uninitialize);
+	/// Normalize parameters and returns the dot product of x and y.
+	/// It's faster that dot(normalize(x), normalize(y)).
+	///
+	/// @see gtx_normalize_dot extension.
+	template <typename T, precision P, template <typename, precision> class vecType>
+	GLM_FUNC_DECL T normalizeDot(vecType<T, P> const & x, vecType<T, P> const & y);
 
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.x), vec.x);
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.y), vec.y);
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.z), vec.z);
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.w), vec.w);
+	/// Normalize parameters and returns the dot product of x and y.
+	/// Faster that dot(fastNormalize(x), fastNormalize(y)).
+	///
+	/// @see gtx_normalize_dot extension.
+	template <typename T, precision P, template <typename, precision> class vecType>
+	GLM_FUNC_DECL T fastNormalizeDot(vecType<T, P> const & x, vecType<T, P> const & y);
 
-				return Result;
-			}
-		};
-#	endif//GLM_HAS_BITSCAN_WINDOWS
-}//namespace detail
+	/// @}
 }//namespace glm
+
+#include "normalize_dot.inl"

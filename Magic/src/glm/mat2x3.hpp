@@ -24,42 +24,38 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 ///
-/// @ref gtc_integer
-/// @file glm/gtc/integer.inl
-/// @date 2014-11-17 / 2014-11-17
+/// @ref core
+/// @file glm/mat2x3.hpp
+/// @date 2013-12-24 / 2013-12-24
 /// @author Christophe Riccio
 ///////////////////////////////////////////////////////////////////////////////////
 
-namespace glm{
-namespace detail
+#pragma once
+
+#include "detail/type_mat2x3.hpp"
+
+namespace glm
 {
-	template <typename T, precision P, template <class, precision> class vecType>
-	struct compute_log2<T, P, vecType, false>
-	{
-		GLM_FUNC_QUALIFIER static vecType<T, P> call(vecType<T, P> const & vec)
-		{
-			//Equivalent to return findMSB(vec); but save one function call in ASM with VC
-			//return findMSB(vec);
-			return vecType<T, P>(detail::compute_findMSB_vec<T, P, vecType, sizeof(T) * 8>::call(vec));
-		}
-	};
+	/// 2 columns of 3 components matrix of low precision floating-point numbers.
+	/// There is no guarantee on the actual precision.
+	///
+	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 4.1.6 Matrices</a>
+	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 4.7.2 Precision Qualifier</a>
+	typedef tmat2x3<float, lowp>		lowp_mat2x3;
 
-#	if GLM_HAS_BITSCAN_WINDOWS
-		template <precision P>
-		struct compute_log2<int, P, tvec4, false>
-		{
-			GLM_FUNC_QUALIFIER static tvec4<int, P> call(tvec4<int, P> const & vec)
-			{
-				tvec4<int, P> Result(glm::uninitialize);
+	/// 2 columns of 3 components matrix of medium precision floating-point numbers.
+	/// There is no guarantee on the actual precision.
+	///
+	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 4.1.6 Matrices</a>
+	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 4.7.2 Precision Qualifier</a>
+	typedef tmat2x3<float, mediump>		mediump_mat2x3;
 
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.x), vec.x);
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.y), vec.y);
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.z), vec.z);
-				_BitScanReverse(reinterpret_cast<unsigned long*>(&Result.w), vec.w);
+	/// 2 columns of 3 components matrix of high precision floating-point numbers.
+	/// There is no guarantee on the actual precision.
+	///
+	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 4.1.6 Matrices</a>
+	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 4.7.2 Precision Qualifier</a>
+	typedef tmat2x3<float, highp>		highp_mat2x3;
 
-				return Result;
-			}
-		};
-#	endif//GLM_HAS_BITSCAN_WINDOWS
-}//namespace detail
 }//namespace glm
+
