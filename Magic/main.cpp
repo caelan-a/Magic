@@ -18,6 +18,7 @@ void checkInput() {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
+	//	Move input to class
 	GLfloat cameraSpeed = 0.05f;
 	if (glfwGetKey(window, GLFW_KEY_W)) 
 		camera.cameraPos += cameraSpeed * camera.cameraFront;
