@@ -1,12 +1,26 @@
 #pragma once
+class Camera;
+
+namespace Meshes {
+	extern GLuint box;
+	extern GLuint square;
+}
+
+namespace Textures {
+	extern GLuint crate;
+	extern GLuint grass;
+}
 
 namespace Drawing {
-	static GLuint vao_quad;
-	static GLuint tex_box;
+	const static int PIXELS_PER_METRE = 50;
 
-	GLuint createSurface(float vertices[], GLuint elements[]);
 	GLuint loadTextureFile(std::string texturePath);
-	void loadQuad();
-	void loadSprites();
-	void drawTexture(GLuint tex, glm::vec3 tint, float alpha);
+	GLuint loadBox();
+	GLuint loadSquare();
+
+	void loadTextures();
+	void drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation, glm::vec3 &tint, float alpha);
+	void init(Camera &cam);
+	void loadMeshes();
+	void drawGrid();
 }

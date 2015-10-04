@@ -4,82 +4,115 @@
 #include "stdafx.h"
 
 //	Global Objects
-SDL_Window* window;
-SDL_GLContext context;
-SDL_Event windowEvent;
-
-bool quit = false;
+GLFWwindow* window;
+Camera camera;
 
 //	Protofunctions
 void init();
 void checkInput();
 void render();
 void cleanup();
+void getSystemInfo();
+
+void checkInput() {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	//	Move input to class
+	GLfloat cameraSpeed = 0.05f;
+	if (glfwGetKey(window, GLFW_KEY_W)) 
+		camera.cameraPos += cameraSpeed * camera.cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S))
+		camera.cameraPos -= cameraSpeed * camera.cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A))
+		camera.cameraPos -= glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D))
+		camera.cameraPos += glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * cameraSpeed;
+}
 
 int main(int argc, char **argv) {
 	init();
 
-	while (!quit) {
+	camera = Camera();
+	Drawing::init(camera);
+	Shader::loadShaders();
+
+	while (!glfwWindowShouldClose(window))
+	{
 		checkInput();
+
+		glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		render();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	cleanup();
-
 	exit(EXIT_SUCCESS);
 }
 
 void render() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	Drawing::drawTexture(Drawing::tex_box, glm::vec3(1.0f,1.0f,1.0f), 1.0f);
-
-	SDL_GL_SwapWindow(window);
-}
-
-void checkInput() {
-	if (SDL_PollEvent(&windowEvent)) {
-		if (windowEvent.type == SDL_QUIT) {
-			quit = true;
-		}
-	}
+	using namespace Drawing;
+	glUseProgram(Shader::flat);
+	Drawing::drawGrid();
+	for (float i = 0; i < 10; i++)
+		drawTexture(Textures::crate, Meshes::box, glm::vec3(3.0f * i, glm::sin(2 * glfwGetTime() + (5*i)) + 2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
+	glUseProgram(0);
 }
 
 void init() {
-	SDL_Init(SDL_INIT_VIDEO);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-	window = SDL_CreateWindow("Magic", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
+	if (glfwInit() != GL_TRUE) {
+		std::cout << "Failed to initialise GLFW";
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	
+	if(!Preferences::fullscreen)
+		window = glfwCreateWindow(Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT, "Magic", nullptr, nullptr);
+	else
+		window = glfwCreateWindow(Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT, "Magic", glfwGetPrimaryMonitor(), nullptr);
 	if (window == nullptr) {
 		std::cout << "Failed to create window";
-		SDL_Quit();
+		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 
-	context = SDL_GL_CreateContext(window);
-	if (context == NULL) {
-		std::cout << "Failed to create context";
-		SDL_Quit();
-		exit(EXIT_FAILURE);
-	}
+	glfwMakeContextCurrent(window);
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
 		std::cout << "Failed to initialise GLEW";
-		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
 
+	getSystemInfo();
+
+	//glViewport(0, 0, Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 
-	Shader::loadShaders();
-	Drawing::loadSprites();
+	glfwSwapInterval(1);
+}
+
+void getSystemInfo() {
+	GLint nrAttributes;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+	std::cout << "Maximum number of vertex attributes supported: " << nrAttributes << std::endl;
 }
 
 void cleanup() {
-	SDL_GL_DeleteContext(context);
-	SDL_Quit();
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Shader.h"
 
+GLuint Shader::flat = 0;
+
 GLuint Shader::createShaderFromFile(int type, const std::string path) {
 	const char* source = nullptr;
 
@@ -26,26 +28,28 @@ GLuint Shader::createShaderFromFile(int type, const std::string path) {
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status != GL_TRUE) {
-		std::cout << "Error compiling vertex shader:\n";
-		char buffer[512];
-		glGetShaderInfoLog(shader, 512, NULL, buffer);
-		for (char c : buffer)
-			std::cout << c;
+		GLchar info[512];
+		glGetShaderInfoLog(shader, 512, NULL, info);
+		std::cout << "Error compiling: " + path + "\n" <<  info << std::endl;
 		glDeleteShader(shader);
-		//exit(EXIT_FAILURE);
 	}
 
 	return shader;
 }
 
 GLuint Shader::createShaderProgram(GLuint vertexS, GLuint fragmentS) {
-	//std::string vstring = "#version 330\nin vec2 position;\nvoid main(){\ngl_Position=vec4(position,0.0,1.0);\n}";
-	//std::string fstring = "#version 330\nout vec4 outColor;\nvoid main(){\outColor=vec4(1.0,1.0,1.0,1.0);\n}";
-
 	GLuint shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexS);
 	glAttachShader(shaderProgram, fragmentS);
 	glLinkProgram(shaderProgram);
+
+	GLint success;
+	GLchar info[512];
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(shaderProgram, 512, NULL, info);
+		std::cout << "Failed linking shader program:\n" << info << std::endl;
+	}
 
 	glDeleteShader(vertexS);
 	glDeleteShader(fragmentS);
@@ -62,5 +66,5 @@ GLuint Shader::loadShader(std::string vPath, std::string fPath) {
 }
 
 void Shader::loadShaders() {
-	flat = loadShader("shaders/v_default.glsl", "shaders/f_default.glsl");
+	Shader::flat = loadShader("shaders/v_default.glsl", "shaders/f_default.glsl");
 }

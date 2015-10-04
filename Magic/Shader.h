@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Shader {
-	static GLuint flat;
+	extern GLuint flat;
 
 	GLuint createShaderFromFile(int type, const std::string path);
 	GLuint createShaderProgram(GLuint vertexS, GLuint fragmentS);
