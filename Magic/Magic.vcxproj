@@ -71,8 +71,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include\box2d;C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include\glew;C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\3p_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\src\box2d;$(ProjectDir)\src\glew;$(ProjectDir)\src\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -96,8 +96,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;glfw3.lib;opengl32.lib;Box2D.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\Caelan\Documents\GitHubVisualStudio\Magic\Magic\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;opengl32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

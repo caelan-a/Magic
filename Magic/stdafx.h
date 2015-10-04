@@ -8,7 +8,7 @@
 #include "targetver.h"
 
 //	Third party headers
-#include <glew\glew.h>
+#include <glew.h>
 #include <glfw\glfw3.h>
 #include <gl\GL.h>
 #include <glm\glm.hpp>
