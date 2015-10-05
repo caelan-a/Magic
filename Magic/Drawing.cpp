@@ -83,6 +83,12 @@ GLuint Drawing::loadBox() {
 }
 
 GLuint Drawing::loadSquare() {
+
+	struct vertex {
+		float pos[3];
+		float uv[2];
+	} vertex;
+
 	float vertices[] = {
 		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
