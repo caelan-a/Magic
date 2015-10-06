@@ -33,30 +33,47 @@ GLuint Drawing::loadTextureFile(std::string texturePath) {
 
 GLuint Drawing::loadBox() {
 	float vertices[] = {
-		-1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
-		 1.0f,  1.0f, -1.0f, 1.0f, 1.0f,
-		 1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-		-1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-		-1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
-		 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
-		 1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
-		-1.0f, -1.0f, 1.0f, 0.0f, 0.0f
-	};
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-	GLuint elements[] = {
-		0,1,2,
-		2,3,0,
-		0,4,5,
-		5,1,0,
-		0,4,7,
-		7,3,0,
-		4,5,6,
-		6,7,4,
-		6,7,3,
-		3,2,6,
-		6,5,1,
-		1,2,6
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
 	GLuint vao;
@@ -73,11 +90,6 @@ GLuint Drawing::loadBox() {
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-	GLuint ebo;
-	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
 	return vao;
 }
@@ -153,6 +165,7 @@ void Drawing::drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm:
 	glm::mat4 model;
 	model = glm::translate(model, position);
 	model = glm::rotate(model, rotation.w, glm::vec3(rotation.x, rotation.y, rotation.z));
+	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 
 	glm::mat4 view;
 	view = glm::lookAt(camera.cameraPos, camera.cameraPos+camera.cameraFront, camera.cameraUp);
@@ -164,7 +177,7 @@ void Drawing::drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm:
 	glUniformMatrix4fv(glGetUniformLocation(Shader::flat, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(Shader::flat, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);

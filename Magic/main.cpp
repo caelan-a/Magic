@@ -28,10 +28,6 @@ void checkInput() {
 		camera.cameraPos -= glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D))
 		camera.cameraPos += glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_LEFT))
-		camera.cameraFront -= glm::normalize(camera.cameraFront + glm::vec3(1.0f, 0.0f, 0.0f)) * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_RIGHT))
-		camera.cameraFront += glm::normalize(camera.cameraFront + glm::vec3(1.0f, 0.0f, 0.0f)) * cameraSpeed;
 }
 
 int main(int argc, char **argv) {
@@ -63,8 +59,7 @@ void render() {
 	glUseProgram(Shader::flat);
 	Drawing::drawGrid();
 	for (float i = 0; i < 10; i++)
-		for (float j = 0; j < 10; j++)
-			drawTexture(Textures::crate, Meshes::box, glm::vec3(3.0f * i, glm::sin(2 * glfwGetTime() + (5*i)) + 3.0f, 5.0f * j), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 0.0f, 1.0f, glm::sin(glfwGetTime())), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
+		drawTexture(Textures::crate, Meshes::box, glm::vec3(3.0f * i, glm::sin(2 * glfwGetTime() + (5*i)) + 2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
 	glUseProgram(0);
 }
 
