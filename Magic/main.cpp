@@ -14,20 +14,30 @@ void render();
 void cleanup();
 void getSystemInfo();
 
+GLfloat lastFrame = 0.0f;
+GLfloat deltaTime = 0.0f;
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+
 void checkInput() {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
+	GLfloat currentFrame = glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
 	//	Move input to class
-	GLfloat cameraSpeed = 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_W)) 
-		camera.cameraPos += cameraSpeed * camera.cameraFront;
+	GLfloat cameraSpeed = 10.0f;
+	if (glfwGetKey(window, GLFW_KEY_W))
+		camera.cameraPos += cameraSpeed * deltaTime * camera.cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_S))
-		camera.cameraPos -= cameraSpeed * camera.cameraFront;
+		camera.cameraPos -= cameraSpeed * deltaTime * camera.cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_A))
-		camera.cameraPos -= glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * cameraSpeed;
+		camera.cameraPos -= glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * deltaTime * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D))
-		camera.cameraPos += glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * cameraSpeed;
+		camera.cameraPos += glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * deltaTime * cameraSpeed;
+
 }
 
 int main(int argc, char **argv) {
@@ -97,11 +107,12 @@ void init() {
 
 	getSystemInfo();
 
-	//glViewport(0, 0, Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	glfwSwapInterval(1);
 }
@@ -115,4 +126,27 @@ void getSystemInfo() {
 void cleanup() {
 	glfwDestroyWindow(window);
 	glfwTerminate();
+}
+
+GLfloat lastX = Preferences::SCREEN_WIDTH / 2;
+GLfloat lastY = Preferences::SCREEN_HEIGHT / 2;
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	GLfloat xOffset = xpos - lastX;
+	GLfloat yOffset = lastY - ypos;
+	GLfloat sensitivity = 0.005f;
+
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
+
+	camera.pitch += yOffset;
+	camera.yaw += xOffset;
+
+	if (camera.pitch > 89.0f)
+		camera.pitch = 89.0f;
+	else if (camera.pitch < -89.0f)
+		camera.pitch = -89.0f;
+
+	lastX = xpos;
+	lastY = ypos;
+	camera.setEulerRotation();
 }
