@@ -360,7 +360,7 @@ void Drawing::render() {
 		drawTexture(crate_diff, crate_spec, box, glm::vec3(3.0f * i + 5.0f, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f,0.1f * i * glfwGetTime()));
 	
 	lampShader.Use();
-	glUniform3f(glGetUniformLocation(lampShader.id, "colour"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(lampShader.id, "colour"), diffuseColor.x, diffuseColor.y, diffuseColor.z);
 	drawLamp(position);
 
 	glUseProgram(0);
