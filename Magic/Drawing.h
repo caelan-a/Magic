@@ -9,7 +9,7 @@ namespace Drawing {
 	GLuint loadSquare();
 
 	void loadTextures();
-	void drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation);
+	void drawTexture(GLuint diffuse, GLuint specular, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation);
 	void init(Camera &cam);
 	void loadMeshes();
 	void loadShaders();

@@ -14,11 +14,11 @@ GLuint square = 0;
 GLuint lamp = 0;
 
 //	Textures
-GLuint crate = 0;
+GLuint crate_diff = 0;
+GLuint crate_spec = 0;
 GLuint grass = 0;
 
-glm::vec3 position(20.0f, 1.0f, 15.0f);
-glm::vec3 ambientColour(0.65f, 0.65f, 0.65f);
+glm::vec3 position(20.0f, 5.0f, 15.0f);
 
 GLuint Drawing::loadTextureFile(std::string texturePath) {
 	GLuint tex;
@@ -209,7 +209,8 @@ GLuint Drawing::loadSquare() {
 }
 
 void Drawing::loadTextures() {
-	crate = loadTextureFile("data/textures/box.png");
+	crate_diff = loadTextureFile("data/textures/box_diffuse.png");
+	crate_spec = loadTextureFile("data/textures/box_spec.png");
 	grass = loadTextureFile("data/textures/grass.jpg");
 }
 
@@ -232,12 +233,16 @@ void Drawing::init(Camera &cam) {
 	loadTextures();
 }
 
-void Drawing::drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation) {
+void Drawing::drawTexture(GLuint diffuse, GLuint specular, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation) {
 	glBindVertexArray(mesh);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glUniform1i(glGetUniformLocation(flatShader.id, "u_tex"), 0);
+	glBindTexture(GL_TEXTURE_2D, diffuse);
+	glUniform1i(glGetUniformLocation(flatShader.id, "material.diffuse"), 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specular);
+	glUniform1i(glGetUniformLocation(flatShader.id, "material.specular"), 1);
+
 
 	glm::mat4 model;
 	model = glm::translate(model, position);
@@ -253,6 +258,13 @@ void Drawing::drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm:
 	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+	
+
+	GLint matSpecularLoc = glGetUniformLocation(flatShader.id, "material.specular");
+	GLint matShineLoc = glGetUniformLocation(flatShader.id, "material.shininess");
+
+	glUniform3f(matSpecularLoc, 0.5f, 0.5f, 0.5f);
+	glUniform1f(matShineLoc, 32.0f);
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -265,7 +277,7 @@ void Drawing::drawGrid() {
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, grass);
-	glUniform1i(glGetUniformLocation(flatShader.id, "u_tex"), 0);
+	glUniform1i(glGetUniformLocation(flatShader.id, "material.diffuse"), 0);
 
 	glm::mat4 view;
 	view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
@@ -274,6 +286,12 @@ void Drawing::drawGrid() {
 
 	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+
+	GLint matSpecularLoc = glGetUniformLocation(flatShader.id, "material.specular");
+	GLint matShineLoc = glGetUniformLocation(flatShader.id, "material.shininess");
+
+	glUniform3f(matSpecularLoc, 0.1f, 0.1f, 0.1f);
+	glUniform1f(matShineLoc, 32.0f);
 
 	float size = 5;
 	float scale = 5;
@@ -313,16 +331,36 @@ void Drawing::render() {
 	using namespace Drawing;
 	
 	flatShader.Use();
-	position.y = sin(glfwGetTime()) * 5.0f + 6.0f;
-	glUniform3f(glGetUniformLocation(flatShader.id, "ambientColour"), ambientColour.r, ambientColour.g, ambientColour.b);
-	glUniform3f(glGetUniformLocation(flatShader.id, "lightPos"), position.x, position.y, position.z);
+	//	Set Global light properties
+	GLint lighPositionLoc = glGetUniformLocation(flatShader.id, "light.position");
+	GLint lightAmbientLoc = glGetUniformLocation(flatShader.id, "light.ambient");
+	GLint lightDiffuseLoc = glGetUniformLocation(flatShader.id, "light.diffuse");
+	GLint lightSpecularLoc = glGetUniformLocation(flatShader.id, "light.specular");
+
+	glm::vec3 lightColor;
+	lightColor.x = 0.5f;
+	lightColor.y = 0.5f;
+	lightColor.z = 0.5f;
+
+	glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // Decrease the influence
+	glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // Low influence
+
+	glUniform3f(lightAmbientLoc, ambientColor.x, ambientColor.y, ambientColor.z);
+	glUniform3f(lightDiffuseLoc, diffuseColor.x, diffuseColor.y, diffuseColor.z);
+
+	//position.y = sin(glfwGetTime()) * 5.0f + 6.0f;
+	glUniform3f(lighPositionLoc, position.x, position.y, position.z);
+	glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
+	
 	glUniform3f(glGetUniformLocation(flatShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
 
+	//	Draw Objects
 	drawGrid();
 	for (float i = 0; i < 10; i++)
-		drawTexture(crate, box, glm::vec3(3.0f * i + 5.0f, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f,0.1f * i * glfwGetTime()));
+		drawTexture(crate_diff, crate_spec, box, glm::vec3(3.0f * i + 5.0f, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f,0.1f * i * glfwGetTime()));
 	
 	lampShader.Use();
+	glUniform3f(glGetUniformLocation(lampShader.id, "colour"), 1.0f, 1.0f, 1.0f);
 	drawLamp(position);
 
 	glUseProgram(0);
