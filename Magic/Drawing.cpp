@@ -17,8 +17,8 @@ GLuint lamp = 0;
 GLuint crate = 0;
 GLuint grass = 0;
 
-glm::vec3 position(20.0f, 5.0f, 15.0f);
-glm::vec3 ambientColour(0.5f, 0.5f, 0.5f);
+glm::vec3 position(20.0f, 1.0f, 15.0f);
+glm::vec3 ambientColour(0.65f, 0.65f, 0.65f);
 
 GLuint Drawing::loadTextureFile(std::string texturePath) {
 	GLuint tex;
@@ -313,6 +313,7 @@ void Drawing::render() {
 	using namespace Drawing;
 	
 	flatShader.Use();
+	position.y = sin(glfwGetTime()) * 5.0f + 6.0f;
 	glUniform3f(glGetUniformLocation(flatShader.id, "ambientColour"), ambientColour.r, ambientColour.g, ambientColour.b);
 	glUniform3f(glGetUniformLocation(flatShader.id, "lightPos"), position.x, position.y, position.z);
 	glUniform3f(glGetUniformLocation(flatShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
