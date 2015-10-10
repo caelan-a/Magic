@@ -1,5 +1,6 @@
 #version 430
 
+uniform vec3 cameraPos;
 uniform vec3 lightPos;
 uniform vec3 ambientColour;
 uniform sampler2D u_tex;
@@ -19,6 +20,12 @@ void main() {
 	float diff = max(dot(norm, lightDir), 0.0);
 	vec3 diffuse = diff * ambientColour;
 
-	outColor = texture(u_tex, texcoords) * vec4(ambient + diffuse, 1.0);
+	float specularIntensity = 0.5f;
+	vec3 viewDir = normalize(cameraPos - FragPos);
+	vec3 reflectDir = reflect(-lightDir, norm);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+	vec3 specular = specularIntensity * spec * ambientColour;  
+
+	outColor = texture(u_tex, texcoords) * vec4(ambient + diffuse + specular, 1.0);
 
 }

@@ -315,6 +315,7 @@ void Drawing::render() {
 	flatShader.Use();
 	glUniform3f(glGetUniformLocation(flatShader.id, "ambientColour"), ambientColour.r, ambientColour.g, ambientColour.b);
 	glUniform3f(glGetUniformLocation(flatShader.id, "lightPos"), position.x, position.y, position.z);
+	glUniform3f(glGetUniformLocation(flatShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
 
 	drawGrid();
 	for (float i = 0; i < 10; i++)
