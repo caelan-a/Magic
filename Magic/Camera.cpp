@@ -10,5 +10,5 @@ Camera::Camera() {
 void Camera::setEulerRotation()
 {
 	glm::vec3 newRotation(glm::cos(pitch) * glm::cos(yaw), glm::sin(pitch), glm::cos(pitch) * glm::sin(yaw));
-	cameraFront = glm::vec3(newRotation);
+	cameraFront = glm::normalize(newRotation);
 }

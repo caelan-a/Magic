@@ -1,10 +1,12 @@
 #pragma once
 
-namespace Shader {
-	extern GLuint flat;
-
+class Shader {
+public:
+	GLuint id;
+	void load(std::string vPath, std::string fPath);
+	void Use();
+private:
 	GLuint createShaderFromFile(int type, const std::string path);
 	GLuint createShaderProgram(GLuint vertexS, GLuint fragmentS);
 	GLuint loadShader(std::string vPath, std::string fPath);
-	void loadShaders();
-}
+};

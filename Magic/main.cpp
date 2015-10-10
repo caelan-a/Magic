@@ -17,6 +17,7 @@ void getSystemInfo();
 GLfloat lastFrame = 0.0f;
 GLfloat deltaTime = 0.0f;
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 void checkInput() {
@@ -27,7 +28,6 @@ void checkInput() {
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
-	//	Move input to class
 	GLfloat cameraSpeed = 10.0f;
 	if (glfwGetKey(window, GLFW_KEY_W))
 		camera.cameraPos += cameraSpeed * deltaTime * camera.cameraFront;
@@ -37,6 +37,10 @@ void checkInput() {
 		camera.cameraPos -= glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * deltaTime * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D))
 		camera.cameraPos += glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) * deltaTime * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_E))
+		camera.cameraPos += glm::vec3(0.0f, 1.0f, 0.0f) * deltaTime * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_Q))
+		camera.cameraPos += glm::vec3(0.0f, -1.0f, 0.0f) * deltaTime * cameraSpeed;
 
 }
 
@@ -45,16 +49,15 @@ int main(int argc, char **argv) {
 
 	camera = Camera();
 	Drawing::init(camera);
-	Shader::loadShaders();
 
 	while (!glfwWindowShouldClose(window))
 	{
 		checkInput();
 
-		glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+		glClearColor(Preferences::clearColour.r, Preferences::clearColour.g, Preferences::clearColour.b, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		render();
+		Drawing::render();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -62,15 +65,6 @@ int main(int argc, char **argv) {
 
 	cleanup();
 	exit(EXIT_SUCCESS);
-}
-
-void render() {
-	using namespace Drawing;
-	glUseProgram(Shader::flat);
-	Drawing::drawGrid();
-	for (float i = 0; i < 10; i++)
-		drawTexture(Textures::crate, Meshes::box, glm::vec3(3.0f * i, glm::sin(2 * glfwGetTime() + (5*i)) + 2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
-	glUseProgram(0);
 }
 
 void init() {
@@ -113,6 +107,7 @@ void init() {
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 
 	glfwSwapInterval(1);
 }
@@ -128,9 +123,17 @@ void cleanup() {
 	glfwTerminate();
 }
 
+bool firstMouse = true;
 GLfloat lastX = Preferences::SCREEN_WIDTH / 2;
 GLfloat lastY = Preferences::SCREEN_HEIGHT / 2;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	if (firstMouse) 
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
 	GLfloat xOffset = xpos - lastX;
 	GLfloat yOffset = lastY - ypos;
 	GLfloat sensitivity = 0.005f;
@@ -149,4 +152,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	lastX = xpos;
 	lastY = ypos;
 	camera.setEulerRotation();
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (camera.fov >= 1.0f && camera.fov <= 45.0f)
+		camera.fov -= yoffset * 0.05f;
+	if (camera.fov <= 1.0f)
+		camera.fov = 1.0f;
+	if (camera.fov >= 45.0f)
+		camera.fov = 45.0f;
 }

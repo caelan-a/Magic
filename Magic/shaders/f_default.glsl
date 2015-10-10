@@ -1,13 +1,24 @@
 #version 430
 
-uniform float u_alpha = 1.0;
-uniform vec3 u_tint = vec3(1.0,1.0,1.0);
+uniform vec3 lightPos;
+uniform vec3 ambientColour;
 uniform sampler2D u_tex;
 
+in vec3 FragPos;
+in vec3 Normal;
 in vec2 texcoords;
 
 out vec4 outColor;
 
 void main() {
-	outColor = texture(u_tex, texcoords)  * vec4(u_tint, 1.0) * u_alpha;
+	float ambientStrength = 0.005f;
+	vec3 ambient = ambientStrength * ambientColour;
+	
+	vec3 norm = normalize(Normal);
+	vec3 lightDir = normalize(lightPos - FragPos);
+	float diff = max(dot(norm, lightDir), 0.0);
+	vec3 diffuse = diff * ambientColour;
+
+	outColor = texture(u_tex, texcoords) * vec4(ambient + diffuse, 1.0);
+
 }

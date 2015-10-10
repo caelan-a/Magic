@@ -70,6 +70,12 @@
     <None Include="shaders\v_default.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\f_lamp.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\v_lamp.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Magic.rc">

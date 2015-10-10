@@ -1,16 +1,6 @@
 #pragma once
 class Camera;
 
-namespace Meshes {
-	extern GLuint box;
-	extern GLuint square;
-}
-
-namespace Textures {
-	extern GLuint crate;
-	extern GLuint grass;
-}
-
 namespace Drawing {
 	const static int PIXELS_PER_METRE = 50;
 
@@ -19,8 +9,12 @@ namespace Drawing {
 	GLuint loadSquare();
 
 	void loadTextures();
-	void drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation, glm::vec3 &tint, float alpha);
+	void drawTexture(GLuint texture, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation);
 	void init(Camera &cam);
 	void loadMeshes();
+	void loadShaders();
 	void drawGrid();
+	void drawLamp(glm::vec3 position);
+
+	void render();
 }

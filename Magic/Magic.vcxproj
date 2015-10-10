@@ -176,7 +176,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\f_default.glsl" />
+    <None Include="shaders\f_lamp.glsl" />
     <None Include="shaders\v_default.glsl" />
+    <None Include="shaders\v_lamp.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Magic.rc" />
