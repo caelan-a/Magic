@@ -17,7 +17,7 @@ GLuint lamp = 0;
 GLuint crate = 0;
 GLuint grass = 0;
 
-glm::vec3 position(5.0f, 5.0f, -15.0f);
+glm::vec3 position(20.0f, 5.0f, 15.0f);
 glm::vec3 ambientColour(0.5f, 0.5f, 0.5f);
 
 GLuint Drawing::loadTextureFile(std::string texturePath) {
@@ -318,7 +318,7 @@ void Drawing::render() {
 
 	drawGrid();
 	for (float i = 0; i < 10; i++)
-		drawTexture(crate, box, glm::vec3(3.0f * i, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+		drawTexture(crate, box, glm::vec3(3.0f * i + 5.0f, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f,0.1f * i * glfwGetTime()));
 	
 	lampShader.Use();
 	drawLamp(position);
