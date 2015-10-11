@@ -331,25 +331,23 @@ void Drawing::render() {
 	using namespace Drawing;
 	
 	flatShader.Use();
-	//	Set Global light properties
-	GLint lighPositionLoc = glGetUniformLocation(flatShader.id, "light.position");
-	GLint lightAmbientLoc = glGetUniformLocation(flatShader.id, "light.ambient");
-	GLint lightDiffuseLoc = glGetUniformLocation(flatShader.id, "light.diffuse");
-	GLint lightSpecularLoc = glGetUniformLocation(flatShader.id, "light.specular");
 
 	glm::vec3 lightColor;
-	lightColor.x = 0.5f;
-	lightColor.y = 0.5f;
-	lightColor.z = 0.5f;
+	lightColor.x = 0.4f;
+	lightColor.y = 0.4f;
+	lightColor.z = 0.4f;
 
 	glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // Decrease the influence
 	glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // Low influence
 
 	glUniform3f(lightAmbientLoc, ambientColor.x, ambientColor.y, ambientColor.z);
 	glUniform3f(lightDiffuseLoc, diffuseColor.x, diffuseColor.y, diffuseColor.z);
+	glUniform1f(glGetUniformLocation(flatShader.id, "light.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(flatShader.id, "light.linear"), 0.09);
+	glUniform1f(glGetUniformLocation(flatShader.id, "light.quadratic"), 0.032);
 
 	//position.y = sin(glfwGetTime()) * 5.0f + 6.0f;
-	glUniform3f(lighPositionLoc, position.x, position.y, position.z);
+	glUniform3f(lighPositionLoc, camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
 	glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
 	
 	glUniform3f(glGetUniformLocation(flatShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
