@@ -236,7 +236,7 @@ void setLightScene(Lighting::LightScene &lightScene) {
 
 	glm::vec3 direction(-1.0f, -0.25f, -1.0f);
 
-	lightScene.setDirectionalLight(direction, colour);
+	lightScene.setDirectionalLight(flatShader.id, direction, colour);
 
 	//	Set 4 point lights
 	Lighting::Attenuation attenuation;
@@ -246,11 +246,29 @@ void setLightScene(Lighting::LightScene &lightScene) {
 
 	glm::vec3 pointColour;
 
-	pointColour = glm::vec3(1.0f,1.0f, 1.0f);
+	pointColour = glm::vec3(1.0f, 0.0f, 0.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(glm::vec3(14.0f, 2.0f, 5.0f), colour, attenuation, 0);
+	lightScene.addPointLight(flatShader.id, 0, glm::vec3(18.0f, 2.0f, 15.0f), colour, attenuation);
+
+	pointColour = glm::vec3(0.0f, 1.0f, 0.0f);
+	colour.ambient = pointColour * 0.2f;
+	colour.diffuse = pointColour;
+	colour.specular = pointColour;
+	lightScene.addPointLight(flatShader.id, 1, glm::vec3(1.0f, 2.0f, 15.0f), colour, attenuation);
+
+	pointColour = glm::vec3(0.0f, 0.0f, 1.0f);
+	colour.ambient = pointColour * 0.2f;
+	colour.diffuse = pointColour;
+	colour.specular = pointColour;
+	lightScene.addPointLight(flatShader.id, 2, glm::vec3(1.0f, 2.0f, 1.0f), colour, attenuation);
+
+	pointColour = glm::vec3(1.0f, 0.0f, 1.0f);
+	colour.ambient = pointColour * 0.2f;
+	colour.diffuse = pointColour;
+	colour.specular = pointColour;
+	lightScene.addPointLight(flatShader.id, 3, glm::vec3(18.0f, 2.0f, 1.0f), colour, attenuation);
 }
 
 void Drawing::init(Camera &cam) {
@@ -262,7 +280,7 @@ void Drawing::init(Camera &cam) {
 
 	setLightScene(lightScene);
 	flatShader.Use();
-	lightScene.uploadUniforms(flatShader.id);
+	lightScene.uploadUniforms();
 }
 
 void Drawing::drawTexture(GLuint diffuse, GLuint specular, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation) {
@@ -345,7 +363,7 @@ void Drawing::drawLamp(glm::vec3 position) {
 
 	glm::mat4 model;
 	model = glm::translate(model, position);
-	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	glm::mat4 view;
 	view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
 	glm::mat4 proj;
@@ -371,8 +389,17 @@ void Drawing::render() {
 	for (float i = 0; i < 10; i++)
 		drawTexture(crate_diff, crate_spec, box, glm::vec3(3.0f * i + 5.0f, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f,0.1f * i * glfwGetTime()));
 
+	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
+		lightScene.pointLights[i].setPosition(glm::vec3(lightScene.pointLights[i].position.x, sin(i * glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.z));
+	}
+
 	lampShader.Use();
-	drawLamp(lightScene.pointLights[0].position);
+	std::cout << "# of lights: " << Lighting::NR_POINT_LIGHTS << std::endl;
+	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
+		glUniform3f(glGetUniformLocation(lampShader.id, "colour"), lightScene.pointLights[i].colour.diffuse.r, lightScene.pointLights[i].colour.diffuse.g, lightScene.pointLights[i].colour.diffuse.b);
+		drawLamp(lightScene.pointLights[i].position);
+	}
+
 	glUseProgram(0);
 }
 

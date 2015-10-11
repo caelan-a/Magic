@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Lighting.h"
 
-void Lighting::PointLight::uploadUniforms(GLuint shaderID, GLuint id)
+void Lighting::PointLight::uploadUniforms()
 {
 	std::string id_s = std::to_string(id);
 	glUniform3f(glGetUniformLocation(shaderID, ("pointLights[" + id_s + "].position").c_str()), position.x, position.y, position.z);
@@ -13,7 +13,14 @@ void Lighting::PointLight::uploadUniforms(GLuint shaderID, GLuint id)
 	glUniform1f(glGetUniformLocation(shaderID, ("pointLights[" + id_s + "]quadratic").c_str()), attenuation.quadratic);
 }
 
-void Lighting::DirectionalLight::uploadUniforms(GLuint shaderID)
+void Lighting::PointLight::setPosition(glm::vec3 position)
+{
+	std::string id_s = std::to_string(id);
+	PointLight::position = position;
+	glUniform3f(glGetUniformLocation(shaderID, ("pointLights[" + id_s + "].position").c_str()), position.x, position.y, position.z);
+}
+
+void Lighting::DirectionalLight::uploadUniforms()
 {
 	glUniform3f(glGetUniformLocation(shaderID, "directionalLight.direction"), direction.x, direction.y, direction.z);
 	glUniform3f(glGetUniformLocation(shaderID, "directionalLight.ambient"), colour.ambient.x, colour.ambient.y, colour.ambient.z);
@@ -26,26 +33,28 @@ Lighting::LightScene::LightScene()
 
 }
 
-void Lighting::LightScene::setDirectionalLight(glm::vec3 direction, Colour colour)
+void Lighting::LightScene::setDirectionalLight(GLuint shaderID, glm::vec3 direction, Colour colour)
 {
-	globalLight = DirectionalLight(direction, colour);
+	globalLight = DirectionalLight(shaderID, direction, colour);
 }
 
-void Lighting::LightScene::addPointLight(glm::vec3 position, Colour colour, Attenuation attenuation, GLuint id)
+void Lighting::LightScene::addPointLight(GLuint shaderID, GLuint id, glm::vec3 position, Colour colour, Attenuation attenuation)
 {
-	pointLights[id] = PointLight(position, colour, attenuation);
+	pointLights[id] = PointLight(shaderID, id, position, colour, attenuation);
 }
 
-void Lighting::LightScene::uploadUniforms(GLuint shaderID)
+void Lighting::LightScene::uploadUniforms()
 {
-	for (int i = 0; i < sizeof(pointLights); i++) {
-		pointLights[i].uploadUniforms(shaderID, i);
+	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
+		pointLights[i].uploadUniforms();
 	}
-	globalLight.uploadUniforms(shaderID);
+	globalLight.uploadUniforms();
 }
 
-Lighting::PointLight::PointLight(glm::vec3 position, Colour colour, Attenuation attenuation)
+Lighting::PointLight::PointLight(GLuint shaderID, GLuint id, glm::vec3 position, Colour colour, Attenuation attenuation)
 {
+	PointLight::shaderID = shaderID;
+	PointLight::id = id;
 	PointLight::position = position;
 	PointLight::colour = colour;
 	PointLight::attenuation = attenuation;
@@ -55,8 +64,9 @@ Lighting::PointLight::PointLight()
 {
 }
 
-Lighting::DirectionalLight::DirectionalLight(glm::vec3 direction, Colour colour)
+Lighting::DirectionalLight::DirectionalLight(GLuint shaderID, glm::vec3 direction, Colour colour)
 {
+	DirectionalLight::shaderID = shaderID;
 	DirectionalLight::direction = direction;
 	DirectionalLight::colour = colour;
 }
