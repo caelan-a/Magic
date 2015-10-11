@@ -247,25 +247,25 @@ void setLightScene(Lighting::LightScene &lightScene) {
 	glm::vec3 pointColour;
 
 	pointColour = glm::vec3(1.0f, 0.0f, 0.0f);
-	colour.ambient = pointColour * 0.2f;
+	colour.ambient = pointColour * 0.1f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
 	lightScene.addPointLight(flatShader.id, 0, glm::vec3(18.0f, 2.0f, 24.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 1.0f, 0.0f);
-	colour.ambient = pointColour * 0.2f;
+	colour.ambient = pointColour * 0.1f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
 	lightScene.addPointLight(flatShader.id, 1, glm::vec3(1.0f, 2.0f, 24.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 0.0f, 1.0f);
-	colour.ambient = pointColour * 0.2f;
+	colour.ambient = pointColour * 0.1f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
 	lightScene.addPointLight(flatShader.id, 2, glm::vec3(1.0f, 2.0f, 14.0f), colour, attenuation);
 
 	pointColour = glm::vec3(1.0f, 0.0f, 1.0f);
-	colour.ambient = pointColour * 0.2f;
+	colour.ambient = pointColour * 0.1f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
 	lightScene.addPointLight(flatShader.id, 3, glm::vec3(18.0f, 2.0f, 14.0f), colour, attenuation);
@@ -390,7 +390,7 @@ void Drawing::render() {
 		drawTexture(crate_diff, crate_spec, box, glm::vec3(3.0f * i + 5.0f, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f,0.1f * i * glfwGetTime()));
 
 	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
-		lightScene.pointLights[i].setPosition(glm::vec3(lightScene.pointLights[i].position.x, sin(i * glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.z));
+		lightScene.pointLights[i].setPosition(glm::vec3(i * 6.0f + glm::sin(glfwGetTime() ) * 3.0f, sin(i * glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.z));
 	}
 
 	lampShader.Use();
