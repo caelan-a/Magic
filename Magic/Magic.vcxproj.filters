@@ -45,6 +45,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Lighting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -62,12 +65,21 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Lighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\f_default.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\v_default.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\f_lamp.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\v_lamp.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Shader.h"
 
-GLuint Shader::flat = 0;
-
 GLuint Shader::createShaderFromFile(int type, const std::string path) {
 	const char* source = nullptr;
 
@@ -65,6 +63,11 @@ GLuint Shader::loadShader(std::string vPath, std::string fPath) {
 	return program;
 }
 
-void Shader::loadShaders() {
-	Shader::flat = loadShader("shaders/v_default.glsl", "shaders/f_default.glsl");
+void Shader::load(std::string vPath, std::string fPath) {
+	id = loadShader(vPath, fPath);
+}
+
+void Shader::Use()
+{
+	glUseProgram(Shader::id);
 }

@@ -29,6 +29,7 @@
 #include "Drawing.h"
 #include "Preferences.h"
 #include "Camera.h"
+#include "Lighting.h"
 
 
 // TODO: reference additional headers your program requires here

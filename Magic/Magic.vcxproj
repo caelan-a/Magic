@@ -156,6 +156,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Lighting.h" />
     <ClInclude Include="Preferences.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawing.cpp" />
+    <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -176,7 +178,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\f_default.glsl" />
+    <None Include="shaders\f_lamp.glsl" />
     <None Include="shaders\v_default.glsl" />
+    <None Include="shaders\v_lamp.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Magic.rc" />
