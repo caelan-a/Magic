@@ -250,25 +250,25 @@ void setLightScene(Lighting::LightScene &lightScene) {
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 0, glm::vec3(18.0f, 2.0f, 15.0f), colour, attenuation);
+	lightScene.addPointLight(flatShader.id, 0, glm::vec3(18.0f, 2.0f, 24.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 1.0f, 0.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 1, glm::vec3(1.0f, 2.0f, 15.0f), colour, attenuation);
+	lightScene.addPointLight(flatShader.id, 1, glm::vec3(1.0f, 2.0f, 24.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 0.0f, 1.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 2, glm::vec3(1.0f, 2.0f, 1.0f), colour, attenuation);
+	lightScene.addPointLight(flatShader.id, 2, glm::vec3(1.0f, 2.0f, 14.0f), colour, attenuation);
 
 	pointColour = glm::vec3(1.0f, 0.0f, 1.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 3, glm::vec3(18.0f, 2.0f, 1.0f), colour, attenuation);
+	lightScene.addPointLight(flatShader.id, 3, glm::vec3(18.0f, 2.0f, 14.0f), colour, attenuation);
 }
 
 void Drawing::init(Camera &cam) {
