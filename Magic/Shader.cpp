@@ -71,3 +71,8 @@ void Shader::Use()
 {
 	glUseProgram(Shader::id);
 }
+
+void Shader::Disable()
+{
+	glUseProgram(0);
+}

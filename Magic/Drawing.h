@@ -4,7 +4,7 @@ class Camera;
 namespace Drawing {
 	const static int PIXELS_PER_METRE = 50;
 
-	GLuint loadTextureFile(std::string texturePath);
+	GLuint loadTextureFile(std::string name, std::string directory);
 	GLuint loadBox();
 	GLuint loadSquare();
 

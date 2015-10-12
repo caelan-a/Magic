@@ -19,8 +19,9 @@ GLuint crate_spec = 0;
 GLuint grass = 0;
 
 Lighting::LightScene lightScene;
+Model nanosuit("data/models/nanosuit.obj");
 
-GLuint Drawing::loadTextureFile(std::string texturePath) {
+GLuint Drawing::loadTextureFile(std::string directory, std::string name) {
 	GLuint tex;
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
@@ -30,9 +31,9 @@ GLuint Drawing::loadTextureFile(std::string texturePath) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	int width, height;
-	unsigned char* image = SOIL_load_image(texturePath.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
+	unsigned char* image = SOIL_load_image((directory+name).c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == nullptr) {
-		std::cerr << "Failed to load image: " + texturePath;
+		std::cerr << "Failed to load image: " + name;
 	}
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -113,18 +114,18 @@ GLuint Drawing::loadBox() {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,0.0f, 0.0f, -1.0f,
 
 		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,0.0f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,0.0f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,0.0f, 0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 
 		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,-1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,-1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,-1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,-1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,-1.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
 
 		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
@@ -209,9 +210,9 @@ GLuint Drawing::loadSquare() {
 }
 
 void Drawing::loadTextures() {
-	crate_diff = loadTextureFile("data/textures/box_diffuse.png");
-	crate_spec = loadTextureFile("data/textures/box_spec.png");
-	grass = loadTextureFile("data/textures/grass.jpg");
+	crate_diff = loadTextureFile("data/textures/", "box_diffuse.png");
+	crate_spec = loadTextureFile("data/textures/", "box_spec.png");
+	grass = loadTextureFile("data/textures/", "grass.jpg");
 }
 
 void Drawing::loadMeshes() {
@@ -382,6 +383,8 @@ void Drawing::render() {
 	
 	flatShader.Use();
 	glUniform3f(glGetUniformLocation(flatShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
+
+	nanosuit.Draw(flatShader);
 
 	//  Grid
 	drawGrid();

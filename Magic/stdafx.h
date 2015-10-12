@@ -15,6 +15,9 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
 #include <SOIL.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 //	Standard headers
 #include <vector>
@@ -30,6 +33,8 @@
 #include "Preferences.h"
 #include "Camera.h"
 #include "Lighting.h"
+#include "Mesh.h"
+#include "Model.h"
 
 
 // TODO: reference additional headers your program requires here
