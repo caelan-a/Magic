@@ -384,7 +384,7 @@ void Drawing::render() {
 	flatShader.Use();
 	glUniform3f(glGetUniformLocation(flatShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
 
-	nanosuit.Draw(flatShader);
+	//nanosuit.Draw(flatShader);
 
 	//  Grid
 	drawGrid();
