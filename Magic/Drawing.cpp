@@ -19,7 +19,7 @@ GLuint crate_spec = 0;
 GLuint grass = 0;
 
 Lighting::LightScene lightScene;
-Model nanosuit("data/models/nanosuit.obj");
+Model nanosuit("data/models/nanosuit/nanosuit.obj");
 
 GLuint Drawing::loadTextureFile(std::string directory, std::string name) {
 	GLuint tex;
