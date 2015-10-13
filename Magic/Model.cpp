@@ -19,8 +19,9 @@ void Model::loadModel(std::string path)
 
 void Model::Draw(Shader shader)
 {
-	for (Mesh m : meshes)
-		m.Draw(shader);
+	for (int i = 0; i < meshes.size(); i++) {
+		meshes[i].Draw(shader);
+	} 
 }
 
 void Model::processNode(aiNode * node, const aiScene * scene)
@@ -71,6 +72,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		}
 		else
 			vertex.texcoords = glm::vec2(0.0f, 0.0f);
+
+		vertices.push_back(vertex);
 	}
 
 	//	Indices
@@ -83,8 +86,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	//	Textures
 	if (mesh->mMaterialIndex >= 0) {
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		
 		std::vector<Mesh::Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+		
 		std::vector<Mesh::Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
@@ -99,7 +104,7 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial * mat, aiTextu
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
-		std::cout << this->directory << str.C_Str() << std::endl;
+		std::cout << this->directory << str.C_Str() << "/" << std::endl;
 		GLboolean skip = false;
 		for (GLuint j = 0; j < textures_loaded.size(); j++)
 		{
@@ -113,7 +118,7 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial * mat, aiTextu
 		if (!skip)
 		{   // If texture hasn't been loaded already, load it
 			Mesh::Texture texture;
-			texture.id = Drawing::loadTextureFile(this->directory + "/", str.C_Str());
+			texture.id = Model::loadTextureFromFile(this->directory + "/", str.C_Str());
 			texture.type = typeName;
 			texture.path = str;
 			textures.push_back(texture);
@@ -121,4 +126,26 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial * mat, aiTextu
 		}
 	}
 	return textures;
+}
+
+GLuint Model::loadTextureFromFile(std::string directory, std::string name)
+{
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	int width, height;
+	unsigned char* image = SOIL_load_image((directory + name).c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
+	if (image == nullptr) {
+		std::cerr << "Failed to load image: " + name;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+
+	SOIL_free_image_data(image);
+	return tex;
 }

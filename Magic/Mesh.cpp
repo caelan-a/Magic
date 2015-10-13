@@ -6,6 +6,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 	this->vertices	= vertices;
 	this->indices	= indices;
 	this->textures	= textures;
+
+	this->setupMesh();
 }
 
 void Mesh::Draw(Shader shader)
@@ -14,6 +16,8 @@ void Mesh::Draw(Shader shader)
 	GLuint specularNr = 1;
 
 	shader.Use();
+	glBindVertexArray(this->VAO);
+
 	for (int i = 0; i < textures.size(); i++) {
 		glActiveTexture(GL_TEXTURE0 + i);
 		std::string number;
@@ -27,10 +31,10 @@ void Mesh::Draw(Shader shader)
 		glUniform1i(glGetUniformLocation(shader.id, ("material." + name + number).c_str()), i);
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
-	glActiveTexture(0);
+	std::cout << "Number of textures: " << textures.size();
 
-	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+	glActiveTexture(0);
 	glBindVertexArray(0);
 	shader.Disable();
 }

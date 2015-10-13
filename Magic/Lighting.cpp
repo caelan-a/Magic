@@ -43,12 +43,14 @@ void Lighting::LightScene::addPointLight(GLuint shaderID, GLuint id, glm::vec3 p
 	pointLights[id] = PointLight(shaderID, id, position, colour, attenuation);
 }
 
-void Lighting::LightScene::uploadUniforms()
+void Lighting::LightScene::uploadUniforms(Shader shader)
 {
+	shader.Use();
 	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
 		pointLights[i].uploadUniforms();
 	}
 	globalLight.uploadUniforms();
+	shader.Disable();
 }
 
 Lighting::PointLight::PointLight(GLuint shaderID, GLuint id, glm::vec3 position, Colour colour, Attenuation attenuation)
