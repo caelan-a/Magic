@@ -47,7 +47,7 @@ namespace Lighting {
 		LightScene();
 		void setDirectionalLight(GLuint shaderID, glm::vec3 direction, Colour colour);
 		void addPointLight(GLuint shaderID, GLuint id, glm::vec3 position, Colour colour, Attenuation attenuation);
-		void uploadUniforms(Shader shader);
+		void uploadUniforms();
 		void cleanup();
 	};
 }
