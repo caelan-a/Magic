@@ -22,6 +22,7 @@
 //	Standard headers
 #include <vector>
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <stdio.h>
 #include <iostream>

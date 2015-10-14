@@ -6,7 +6,11 @@ public:
 		this->loadModel(path);
 	}
 	void loadModel(std::string path);
-	void Draw(Shader shader);
+	void Draw(Shader shader)
+	{
+		for (GLuint i = 0; i < this->meshes.size(); i++)
+			this->meshes[i].Draw(shader);
+	}
 
 private:
 	std::vector<Mesh::Texture> textures_loaded;
