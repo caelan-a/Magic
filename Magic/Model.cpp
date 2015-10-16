@@ -2,6 +2,29 @@
 #include "Model.h"
 
 
+GLuint loadTextureFile(std::string directory, std::string name) {
+	GLuint tex;
+
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+									   // Set our texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Set texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load, create texture and generate mipmaps
+	int width, height;
+	unsigned char* image = SOIL_load_image((directory + name).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(image);
+	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+									 // ===================
+	return tex;
+}
+
+
 void Model::loadModel(std::string path)
 {
 	Assimp::Importer importer;
@@ -108,13 +131,25 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial * mat, aiTextu
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
-		// If texture hasn't been loaded already, load it
+		GLboolean skip = false;
+		for (GLuint j = 0; j < textures_loaded.size(); j++)
+		{
+			if (textures_loaded[j].path == str)
+			{
+				textures.push_back(textures_loaded[j]);
+				skip = true;
+				break;
+			}
+		}
+		if (!skip)
+		{   // If texture hasn't been loaded already, load it
 			Mesh::Texture texture;
-			texture.id = Drawing::loadTextureFile(this->directory + "/", str.C_Str());
+			texture.id = loadTextureFile(this->directory + "/", str.C_Str());
 			texture.type = typeName;
 			texture.path = str;
 			textures.push_back(texture);
-			this->textures_loaded.push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+			this->textures_loaded.push_back(texture);  // Add to loaded textures
+		}
 	}
 	return textures;
 }

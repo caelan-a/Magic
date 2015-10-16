@@ -24,6 +24,7 @@ Model* nanosuit = nullptr;
 
 GLuint Drawing::loadTextureFile(std::string directory, std::string name) {
 	GLuint tex;
+
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

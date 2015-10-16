@@ -31,7 +31,7 @@ void Mesh::Draw(Shader shader)
 			ss << specularNr++; // Transfer GLuint to stream
 		number = ss.str();
 		// Now set the sampler to the correct texture unit
-		glUniform1i(glGetUniformLocation(shader.id, (name + number).c_str()), i);
+		glUniform1i(glGetUniformLocation(shader.id, (name + number).c_str()), GL_TEXTURE0 + i);
 		// And finally bind the texture
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
