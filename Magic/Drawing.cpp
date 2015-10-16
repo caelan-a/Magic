@@ -232,7 +232,7 @@ void Drawing::loadShaders() {
 void setLightScene(Lighting::LightScene &lightScene) {
 
 	//	Set directional light
-	float luminosity = 0.0f;
+	float luminosity = 0.5f;
 	Lighting::Colour colour;
 	colour.ambient = glm::vec3(luminosity);
 	colour.diffuse = glm::vec3(luminosity);
@@ -387,7 +387,7 @@ void Drawing::drawLamp(glm::vec3 position) {
 void drawModel() {
 	modelShader.Use();
 	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(1.0f, 1.0f, 5.0f));
+	model = glm::translate(model, glm::vec3(10.0f, 1.0f, 15.0f));
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	glm::mat4 view;
 	view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
