@@ -9,7 +9,9 @@ Shader lampShader;
 Shader modelShader;
 
 Lighting::LightScene lightScene;
+
 Model* nanosuit = nullptr;
+Model* cube = nullptr;
 
 void Drawing::loadShaders() {
 	lampShader.load("shaders/v_lamp.glsl", "shaders/f_lamp.glsl");
@@ -17,7 +19,8 @@ void Drawing::loadShaders() {
 }
 
 void loadModels() {
-	nanosuit = new Model("data/models/cube/textured_cube.obj");
+	nanosuit = new Model("data/models/plane/plane.obj");
+	//cube = new Model("data/models/cube/textured_cube.obj");
 }
 
 void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
@@ -96,11 +99,6 @@ void Drawing::render() {
 	uploadViewProjection(modelShader);
 
 	modelShader.Use();
-	float size = 1.0f;
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(10.0f, 1.5f, 15.0f));
-	model = glm::scale(model, glm::vec3(size, size, size));
-	glUniformMatrix4fv(glGetUniformLocation(modelShader.id, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	modelShader.Disable();
 	nanosuit->Draw(modelShader);
 }

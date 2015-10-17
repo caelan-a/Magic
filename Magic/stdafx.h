@@ -36,6 +36,8 @@
 #include "Lighting.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Entity.h"
+#include "Assets.h"
 
 
 // TODO: reference additional headers your program requires here

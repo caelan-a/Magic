@@ -51,6 +51,12 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -77,14 +83,11 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\f_default.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shaders\v_default.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="shaders\f_lamp.glsl">
       <Filter>Shaders</Filter>
     </None>
