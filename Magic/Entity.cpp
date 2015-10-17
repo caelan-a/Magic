@@ -13,6 +13,11 @@ void Entity::setScale(glm::vec3 scale) {
 	this->transform.size = scale;
 }
 
+void Entity::rotate(glm::vec3 rotation)
+{
+	this->transform.rotation += rotation;
+}
+
 void Entity::draw(Shader shader) {
 	uploadModelMatrix(shader);
 	this->model->Draw(shader);
@@ -22,11 +27,11 @@ void Entity::uploadModelMatrix(Shader shader) {
 	glm::mat4 modelMatrix;
 
 	shader.Use();
+	modelMatrix = glm::translate(modelMatrix, transform.position);
+
 	modelMatrix = glm::rotate(modelMatrix, transform.rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
 	modelMatrix = glm::rotate(modelMatrix, transform.rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::rotate(modelMatrix, transform.rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-
-	modelMatrix = glm::translate(modelMatrix, transform.position);
 
 	modelMatrix = glm::scale(modelMatrix, transform.size);
 

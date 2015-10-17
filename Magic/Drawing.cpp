@@ -8,22 +8,22 @@ Assets assets;
 
 Lighting::LightScene lightScene;
 
-Entity* cube = nullptr;
+std::vector<Entity*> cubes;
+
+//	Function Declarations
+void createEntities();
 
 class Ground {
 public:
-	Model* model;
-	float tileSize = 2.0f;
-	float groundSize = 16.0f;
-
-	Ground(Model* model) {
-		this->model = model;
-	}
+	float tileSize = 4.0f;
+	float groundSize = 32.0f;
 
 	void draw() {
 		for (int i = 0; i < groundSize / tileSize; i++) {
-			uploadModelMatrix(assets.shaders.modelShader, glm::vec3((i * tileSize) - (groundSize / 2), 0.0f, (i * tileSize) - (groundSize / 2)), tileSize);
-			model->Draw(assets.shaders.modelShader);
+			for (int j = 0; j < groundSize / tileSize; j++) {
+				uploadModelMatrix(assets.shaders.modelShader, glm::vec3((j * 2 * tileSize) - (groundSize), 0.0f, (i * 2 * tileSize) - (groundSize)), tileSize);
+				assets.models.plane->Draw(assets.shaders.modelShader);
+			}
 		}
 	}
 
@@ -36,12 +36,11 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(shader.id, "model"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		shader.Disable();
 	}
-};
-Ground ground(assets.models.plane);
+} ground;
 
 void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	//	Set directional light
-	float luminosity = 0.5f;
+	float luminosity = Preferences::clearColour.r;
 	Lighting::Colour colour;
 	colour.ambient = glm::vec3(luminosity);
 	colour.diffuse = glm::vec3(luminosity);
@@ -63,25 +62,25 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 0, glm::vec3(18.0f, 2.0f, 24.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 0, glm::vec3(18.0f, 2.0f, 10.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 1.0f, 0.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 1, glm::vec3(1.0f, 2.0f, 24.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 1, glm::vec3(1.0f, 2.0f, 10.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 0.0f, 1.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 2, glm::vec3(1.0f, 2.0f, 14.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 2, glm::vec3(1.0f, 2.0f, -15.0f), colour, attenuation);
 
 	pointColour = glm::vec3(1.0f, 0.0f, 1.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 3, glm::vec3(18.0f, 2.0f, 14.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 3, glm::vec3(18.0f, 2.0f, -15.0f), colour, attenuation);
 
 	//	Upload Uniforms
 	lightScene.uploadUniforms(shader);
@@ -91,9 +90,14 @@ void Drawing::init(Camera &cam) {
 	camera = cam;
 	assets.loadAssets();
 	setLightScene(lightScene, assets.shaders.modelShader);
+	createEntities();
+}
 
-	cube = new Entity(assets.models.cube, assets.shaders.modelShader, glm::vec3(0.0f, 2.0f, 0.0f));
-	cube->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
+void createEntities() {
+	for (int i = 0; i < 5; i++) {
+		cubes.push_back(new Entity(assets.models.cube, assets.shaders.modelShader, glm::vec3(i * 6.0f, 2.0f, -5.0f)));
+		cubes[i]->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
+	}
 }
 
 void uploadViewProjection(Shader shader) {
@@ -111,12 +115,19 @@ void uploadViewProjection(Shader shader) {
 	shader.Disable();
 }
 
+void update() {
+	for (Entity* e : cubes)
+		e->rotate(glm::vec3(0.0f, 0.005f, 0.0f));
+}
+
 void Drawing::render() {
 	uploadViewProjection(assets.shaders.modelShader);
 	uploadViewProjection(assets.shaders.lampShader);
 
+	update();
+
 	ground.draw();
-	lightScene.drawPoints(assets.shaders.lampShader, assets.models.cube);
+	lightScene.drawPoints(assets.shaders.lampShader, assets.models.sphere);
 	Entities::drawEntities();
 }
 

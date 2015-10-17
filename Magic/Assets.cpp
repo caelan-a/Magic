@@ -14,4 +14,6 @@ void Assets::loadShaders()
 void Assets::loadModels() {
 	models.plane = new Model("data/models/plane/plane.obj");
 	models.cube = new Model("data/models/cube/textured_cube.obj");
+	models.sphere = new Model("data/models/orb/orb.obj");
+
 }

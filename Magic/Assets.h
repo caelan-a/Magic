@@ -11,6 +11,7 @@ public:
 		Model* nanosuit = nullptr;
 		Model* cube = nullptr;
 		Model* plane = nullptr;
+		Model* sphere = nullptr;
 	} models;
 
 	Assets();
@@ -24,6 +25,7 @@ public:
 		delete(models.nanosuit);
 		delete(models.cube);
 		delete(models.plane);
+		delete(models.sphere);
 	}
 
 private:

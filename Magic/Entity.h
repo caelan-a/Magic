@@ -12,6 +12,7 @@ public:
 	Model* model = nullptr;
 
 	void setScale(glm::vec3 scale);
+	void rotate(glm::vec3 rotation);
 
 	Entity(Model* model, Shader shader, glm::vec3 position);
 	void draw(Shader shader);
