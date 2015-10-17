@@ -5,235 +5,24 @@ class Camera;
 extern Camera camera;
 
 //	Shaders
-Shader flatShader;
 Shader lampShader;
 Shader modelShader;
 
-//	Meshes
-GLuint box = 0;
-GLuint square = 0;
-GLuint lamp = 0;
-
-//	Textures
-GLuint crate_diff = 0;
-GLuint crate_spec = 0;
-GLuint grass = 0;
-
 Lighting::LightScene lightScene;
-Lighting::LightScene modelLightScene;
 Model* nanosuit = nullptr;
 
-GLuint Drawing::loadTextureFile(std::string directory, std::string name) {
-	GLuint tex;
-
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	int width, height;
-	unsigned char* image = SOIL_load_image((directory+name).c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
-	if (image == nullptr) {
-		std::cerr << "Failed to load image: " + name;
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	//glGenerateMipmap(GL_TEXTURE_2D);
-	std::cout << "Loaded image: " << directory << name << std::endl;
-	SOIL_free_image_data(image);
-
-	return tex;
-}
-
-GLuint loadLamp() {
-	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f, 
-		0.5f,  0.5f, -0.5f, 
-		0.5f,  0.5f, -0.5f, 
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-							
-		-0.5f, -0.5f,  0.5f,
-		0.5f, -0.5f,  0.5f, 
-		0.5f,  0.5f,  0.5f, 
-		0.5f,  0.5f,  0.5f, 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-							
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-							
-		0.5f,  0.5f,  0.5f, 
-		0.5f,  0.5f, -0.5f, 
-		0.5f, -0.5f, -0.5f, 
-		0.5f, -0.5f, -0.5f, 
-		0.5f, -0.5f,  0.5f, 
-		0.5f,  0.5f,  0.5f, 
-							
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f, 
-		0.5f, -0.5f,  0.5f, 
-		0.5f, -0.5f,  0.5f, 
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
-							
-		-0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f, 
-		0.5f,  0.5f,  0.5f, 
-		0.5f,  0.5f,  0.5f, 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-	};
-
-
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	return vao;
-}
-
-GLuint Drawing::loadBox() {
-	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,0.0f, 0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,0.0f, 0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,0.0f, 0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,0.0f, 0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,0.0f, 0.0f, -1.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f, -1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-	};
-
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-	return vao;
-}
-
-GLuint Drawing::loadSquare() {
-	float vertices[] = {
-		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f,
-		 1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
-		 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f
-	};
-
-	GLuint elements[] = {
-		0,1,2,
-		2,3,0,
-	};
-
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-
-
-	GLuint ebo;
-	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-
-	return vao;
-}
-
-void Drawing::loadTextures() {
-	crate_diff = loadTextureFile("data/textures/", "box_diffuse.png");
-	crate_spec = loadTextureFile("data/textures/", "box_spec.png");
-	grass = loadTextureFile("data/textures/", "grass.jpg");
-}
-
-void Drawing::loadMeshes() {
-	box = loadBox();
-	square = loadSquare();
-	lamp = loadLamp();
-}
-
 void Drawing::loadShaders() {
-	flatShader.load("shaders/v_default.glsl", "shaders/f_default.glsl");
 	lampShader.load("shaders/v_lamp.glsl", "shaders/f_lamp.glsl");
 	modelShader.load("shaders/v_model.glsl", "shaders/f_model.glsl");
 }
 
-void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
+void loadModels() {
+	nanosuit = new Model("data/models/cube/textured_cube.obj");
+}
 
+void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	//	Set directional light
-	float luminosity = 0.0f;
+	float luminosity = 0.5f;
 	Lighting::Colour colour;
 	colour.ambient = glm::vec3(luminosity);
 	colour.diffuse = glm::vec3(luminosity);
@@ -274,180 +63,50 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
 	lightScene.addPointLight(shader.id, 3, glm::vec3(18.0f, 2.0f, 14.0f), colour, attenuation);
+
+	//	Upload Uniforms
+	lightScene.uploadUniforms(modelShader);
 }
 
 void Drawing::init(Camera &cam) {
 	camera = cam;
 
 	loadShaders();
-	loadMeshes();
-	loadTextures();
+	loadModels();
 
-	setLightScene(lightScene, flatShader);
-	flatShader.Use();
-	lightScene.uploadUniforms();
-
-	setLightScene(modelLightScene, modelShader);
-	modelShader.Use();
-	lightScene.uploadUniforms();
-	modelShader.Disable();
-
-	nanosuit = new Model("data/models/nanosuit/nanosuit.obj");
+	setLightScene(lightScene, modelShader);
 }
 
-void Drawing::drawTexture(GLuint diffuse, GLuint specular, GLuint mesh, glm::vec3 &position, glm::vec3 &size, glm::vec4 &rotation) {
-	glBindVertexArray(mesh);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, diffuse);
-	glUniform1i(glGetUniformLocation(flatShader.id, "material.diffuse"), 0);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, specular);
-	glUniform1i(glGetUniformLocation(flatShader.id, "material.specular"), 1);
-
-
-	glm::mat4 model;
-	model = glm::translate(model, position);
-	model = glm::rotate(model, rotation.w, glm::vec3(rotation.x, rotation.y, rotation.z));
-	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-
-	glm::mat4 view;
-	view = glm::lookAt(camera.cameraPos, camera.cameraPos+camera.cameraFront, camera.cameraUp);
-
-	glm::mat4 proj;
-	proj = glm::perspective(camera.fov, (float)Preferences::SCREEN_WIDTH / (float)Preferences::SCREEN_HEIGHT, 0.1f, 100.0f);
-
-	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+void uploadViewProjection(Shader shader) {
+	shader.Use();
 	
-
-	GLint matSpecularLoc = glGetUniformLocation(flatShader.id, "material.specular");
-	GLint matShineLoc = glGetUniformLocation(flatShader.id, "material.shininess");
-
-	glUniform3f(matSpecularLoc, 0.5f, 0.5f, 0.5f);
-	glUniform1f(matShineLoc, 32.0f);
-
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-
-	glActiveTexture(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
-}
-
-void Drawing::drawGrid() {
-	glBindVertexArray(square);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, grass);
-	glUniform1i(glGetUniformLocation(flatShader.id, "material.diffuse"), GL_TEXTURE0);
-	glActiveTexture(0);
 	glm::mat4 view;
 	view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
 	glm::mat4 proj;
 	proj = glm::perspective(camera.fov, (float)Preferences::SCREEN_WIDTH / (float)Preferences::SCREEN_HEIGHT, 0.1f, 100.0f);
-
-	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
-
-	GLint matSpecularLoc = glGetUniformLocation(flatShader.id, "material.specular");
-	GLint matShineLoc = glGetUniformLocation(flatShader.id, "material.shininess");
-
-	glUniform3f(matSpecularLoc, 0.1f, 0.1f, 0.1f);
-	glUniform1f(matShineLoc, 32.0f);
-
-	float size = 5;
-	float scale = 5;
-	for (float x = 0; x < scale*size; x+=scale) {
-		for (float z = 0; z < scale*size; z+=scale) {
-			glm::mat4 model;
-			model = glm::translate(model, glm::vec3(2*x, 0.0f, 2*z));
-			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(scale, scale, scale));
-			glUniformMatrix4fv(glGetUniformLocation(flatShader.id, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		}
-	}
-	glBindVertexArray(0);
-}
-
-void Drawing::drawLamp(glm::vec3 position) {
-	glBindVertexArray(lamp);
-
-	glm::mat4 model;
-	model = glm::translate(model, position);
-	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-	glm::mat4 view;
-	view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
-	glm::mat4 proj;
-	proj = glm::perspective(camera.fov, (float)Preferences::SCREEN_WIDTH / (float)Preferences::SCREEN_HEIGHT, 0.1f, 100.0f);
-
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.id, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(lampShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
-
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
-}
-
-void drawModel() {
-	modelShader.Use();
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(10.0f, 0.0f, 15.0f));
-	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-	glm::mat4 view;
-	view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
-	glm::mat4 proj;
-	proj = glm::perspective(camera.fov, (float)Preferences::SCREEN_WIDTH / (float)Preferences::SCREEN_HEIGHT, 0.1f, 100.0f);
-
-	glUniformMatrix4fv(glGetUniformLocation(modelShader.id, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	
+	glUniform3f(glGetUniformLocation(modelShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
 	glUniformMatrix4fv(glGetUniformLocation(modelShader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(modelShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
-	glUniform3f(glGetUniformLocation(modelShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
-	modelShader.Disable();
-	nanosuit->Draw(modelShader);
-
-
+	
+	shader.Disable();
 }
 
 void Drawing::render() {
-	drawModel();
-
-	using namespace Drawing;
-	
-	flatShader.Use();
-	glUniform3f(glGetUniformLocation(flatShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
-
-	//nanosuit.Draw(flatShader);
-
-	//  Grid
-	drawGrid();
-	//	Boxes
-	for (float i = 0; i < 10; i++)
-		drawTexture(crate_diff, crate_spec, box, glm::vec3(3.0f * i + 5.0f, glm::sin(2 * glfwGetTime() + (5 * i)) + 2.0f, 20.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f,0.1f * i * glfwGetTime()));
-
-	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
-		lightScene.pointLights[i].setPosition(glm::vec3(lightScene.pointLights[i].position.x, sin(i * glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.z));
-	}
-
-	lampShader.Use();
-	std::cout << "# of lights: " << Lighting::NR_POINT_LIGHTS << std::endl;
-	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
-		glUniform3f(glGetUniformLocation(lampShader.id, "colour"), lightScene.pointLights[i].colour.diffuse.r, lightScene.pointLights[i].colour.diffuse.g, lightScene.pointLights[i].colour.diffuse.b);
-		drawLamp(lightScene.pointLights[i].position);
-	}
+	uploadViewProjection(modelShader);
 
 	modelShader.Use();
-	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
-		modelLightScene.pointLights[i].setPosition(glm::vec3(modelLightScene.pointLights[i].position.x, sin(i * glfwGetTime()) + 3.0f, modelLightScene.pointLights[i].position.z));
-	}
-
-	glUseProgram(0);
+	float size = 1.0f;
+	glm::mat4 model;
+	model = glm::translate(model, glm::vec3(10.0f, 1.5f, 15.0f));
+	model = glm::scale(model, glm::vec3(size, size, size));
+	glUniformMatrix4fv(glGetUniformLocation(modelShader.id, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	modelShader.Disable();
+	nanosuit->Draw(modelShader);
 }
 
 void Drawing::cleanup()
 {
-	//lightScene->cleanup();
-	//delete(lightScene);
+	delete(nanosuit);
 }
 

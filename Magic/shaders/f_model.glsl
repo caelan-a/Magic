@@ -53,11 +53,10 @@ void main() {
 	vec3 result = CalcdirectionalLight(directionalLight, norm, viewDir);
 
 	//	Point Lighting
-	for(int i = 0; i < NR_POINT_LIGHTS; i++)
-		result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+	//for(int i = 0; i < NR_POINT_LIGHTS; i++)
+		//result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
 
 	finalColour = vec4(result, 1.0);
-	//finalColour = vec4(texture(texture_diffuse1, texcoords));
 }
 
 vec3 CalcdirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
