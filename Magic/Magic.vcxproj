@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\src\box2d;$(ProjectDir)\src\glew;$(ProjectDir)\src\;$(ProjectDir)\src\assimp;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\src\box2d;$(ProjectDir)\src\glew;$(ProjectDir)\src\;$(ProjectDir)\src\assimp;$(ProjectDir)\src\SOIL2;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -81,6 +81,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\src\box2d;$(ProjectDir)\src\glew;$(ProjectDir)\src\;$(ProjectDir)\src\assimp;$(ProjectDir)\src\SOIL2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -96,7 +98,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;glfw3.lib;assimp.lib;opengl32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;assimp.lib;opengl32.lib;SOIL.lib;soil2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -130,6 +132,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;assimp.lib;opengl32.lib;SOIL.lib;soil2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -186,8 +189,10 @@
   <ItemGroup>
     <None Include="shaders\f_lamp.glsl" />
     <None Include="shaders\f_model.glsl" />
+    <None Include="shaders\f_splash.glsl" />
     <None Include="shaders\v_lamp.glsl" />
     <None Include="shaders\v_model.glsl" />
+    <None Include="shaders\v_splash.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Magic.rc" />

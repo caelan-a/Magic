@@ -103,6 +103,12 @@
     <None Include="shaders\f_model.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\v_splash.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\f_splash.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Magic.rc">

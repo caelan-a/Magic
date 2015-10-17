@@ -15,7 +15,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
 #include <glm/gtx/rotate_vector.hpp>
-#include <SOIL.h>
+#include <SOIL2\SOIL2.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>

@@ -12,6 +12,7 @@ public:
 		Model* cube = nullptr;
 		Model* plane = nullptr;
 		Model* sphere = nullptr;
+		Model* tree = nullptr;
 	} models;
 
 	Assets();
@@ -26,6 +27,7 @@ public:
 		delete(models.cube);
 		delete(models.plane);
 		delete(models.sphere);
+		delete(models.tree);
 	}
 
 private:

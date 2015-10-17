@@ -9,6 +9,8 @@ Assets assets;
 Lighting::LightScene lightScene;
 
 std::vector<Entity*> cubes;
+Entity* tree;
+
 //Entity* nanosuit;
 
 //	Function Declarations
@@ -17,7 +19,7 @@ void createEntities();
 class Ground {
 public:
 	float tileSize = 8.0f;
-	float groundSize = 32.0f;
+	float groundSize = 128.0f;
 
 	void draw() {
 		for (int i = 0; i < groundSize / tileSize; i++) {
@@ -60,9 +62,9 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	glm::vec3 pointColour;
 
 	pointColour = glm::vec3(1.0f, 1.0f, 1.0f);
-	colour.ambient = pointColour * 0.0f;
+	colour.ambient = pointColour * 0.1f;
 	colour.diffuse = pointColour * 0.8f;
-	colour.specular = pointColour * 0.5f;
+	colour.specular = pointColour * 1.0f;
 	lightScene.addPointLight(shader.id, 0, glm::vec3(5.0f, 7.0f, 10.0f), colour, attenuation);
 
 	//	Upload Uniforms
@@ -81,7 +83,8 @@ void createEntities() {
 		cubes.push_back(new Entity(assets.models.cube, assets.shaders.modelShader, glm::vec3(i * 6.0f, 2.0f, -5.0f)));
 		cubes[i]->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
 	}
-	
+	tree = new Entity(assets.models.tree, assets.shaders.modelShader, glm::vec3(0.0f, -0.5f, 5.0f));
+	tree->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
 	//nanosuit = new Entity(assets.models.nanosuit, assets.shaders.modelShader, glm::vec3(0.0f, 0.0f, 5.0f));
 }
 
