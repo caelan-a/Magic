@@ -20,6 +20,7 @@ GLuint crate_spec = 0;
 GLuint grass = 0;
 
 Lighting::LightScene lightScene;
+Lighting::LightScene modelLightScene;
 Model* nanosuit = nullptr;
 
 GLuint Drawing::loadTextureFile(std::string directory, std::string name) {
@@ -229,10 +230,10 @@ void Drawing::loadShaders() {
 	modelShader.load("shaders/v_model.glsl", "shaders/f_model.glsl");
 }
 
-void setLightScene(Lighting::LightScene &lightScene) {
+void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 
 	//	Set directional light
-	float luminosity = 0.5f;
+	float luminosity = 0.0f;
 	Lighting::Colour colour;
 	colour.ambient = glm::vec3(luminosity);
 	colour.diffuse = glm::vec3(luminosity);
@@ -240,7 +241,7 @@ void setLightScene(Lighting::LightScene &lightScene) {
 
 	glm::vec3 direction(-1.0f, -0.25f, -1.0f);
 
-	lightScene.setDirectionalLight(flatShader.id, direction, colour);
+	lightScene.setDirectionalLight(shader.id, direction, colour);
 
 	//	Set 4 point lights
 	Lighting::Attenuation attenuation;
@@ -254,25 +255,25 @@ void setLightScene(Lighting::LightScene &lightScene) {
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 0, glm::vec3(18.0f, 2.0f, 24.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 0, glm::vec3(18.0f, 2.0f, 24.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 1.0f, 0.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 1, glm::vec3(1.0f, 2.0f, 24.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 1, glm::vec3(1.0f, 2.0f, 24.0f), colour, attenuation);
 
 	pointColour = glm::vec3(0.0f, 0.0f, 1.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 2, glm::vec3(1.0f, 2.0f, 14.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 2, glm::vec3(1.0f, 2.0f, 14.0f), colour, attenuation);
 
 	pointColour = glm::vec3(1.0f, 0.0f, 1.0f);
 	colour.ambient = pointColour * 0.2f;
 	colour.diffuse = pointColour;
 	colour.specular = pointColour;
-	lightScene.addPointLight(flatShader.id, 3, glm::vec3(18.0f, 2.0f, 14.0f), colour, attenuation);
+	lightScene.addPointLight(shader.id, 3, glm::vec3(18.0f, 2.0f, 14.0f), colour, attenuation);
 }
 
 void Drawing::init(Camera &cam) {
@@ -282,9 +283,14 @@ void Drawing::init(Camera &cam) {
 	loadMeshes();
 	loadTextures();
 
-	setLightScene(lightScene);
+	setLightScene(lightScene, flatShader);
 	flatShader.Use();
 	lightScene.uploadUniforms();
+
+	setLightScene(modelLightScene, modelShader);
+	modelShader.Use();
+	lightScene.uploadUniforms();
+	modelShader.Disable();
 
 	nanosuit = new Model("data/models/nanosuit/nanosuit.obj");
 }
@@ -387,7 +393,7 @@ void Drawing::drawLamp(glm::vec3 position) {
 void drawModel() {
 	modelShader.Use();
 	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(10.0f, 1.0f, 15.0f));
+	model = glm::translate(model, glm::vec3(10.0f, 0.0f, 15.0f));
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	glm::mat4 view;
 	view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
@@ -429,6 +435,11 @@ void Drawing::render() {
 	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
 		glUniform3f(glGetUniformLocation(lampShader.id, "colour"), lightScene.pointLights[i].colour.diffuse.r, lightScene.pointLights[i].colour.diffuse.g, lightScene.pointLights[i].colour.diffuse.b);
 		drawLamp(lightScene.pointLights[i].position);
+	}
+
+	modelShader.Use();
+	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
+		modelLightScene.pointLights[i].setPosition(glm::vec3(modelLightScene.pointLights[i].position.x, sin(i * glfwGetTime()) + 3.0f, modelLightScene.pointLights[i].position.z));
 	}
 
 	glUseProgram(0);
