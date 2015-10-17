@@ -4,24 +4,40 @@
 class Camera;
 extern Camera camera;
 
-//	Shaders
-Shader lampShader;
-Shader modelShader;
+Assets assets;
 
 Lighting::LightScene lightScene;
 
-Model* nanosuit = nullptr;
-Model* cube = nullptr;
+Entity* cube = nullptr;
 
-void Drawing::loadShaders() {
-	lampShader.load("shaders/v_lamp.glsl", "shaders/f_lamp.glsl");
-	modelShader.load("shaders/v_model.glsl", "shaders/f_model.glsl");
-}
+class Ground {
+public:
+	Model* model;
+	float tileSize = 2.0f;
+	float groundSize = 16.0f;
 
-void loadModels() {
-	nanosuit = new Model("data/models/plane/plane.obj");
-	//cube = new Model("data/models/cube/textured_cube.obj");
-}
+	Ground(Model* model) {
+		this->model = model;
+	}
+
+	void draw() {
+		for (int i = 0; i < groundSize / tileSize; i++) {
+			uploadModelMatrix(assets.shaders.modelShader, glm::vec3((i * tileSize) - (groundSize / 2), 0.0f, (i * tileSize) - (groundSize / 2)), tileSize);
+			model->Draw(assets.shaders.modelShader);
+		}
+	}
+
+	void uploadModelMatrix(Shader shader, glm::vec3 position, float size) {
+		glm::mat4 modelMatrix;
+
+		shader.Use();
+		modelMatrix = glm::translate(modelMatrix, position);
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(size, size, size));
+		glUniformMatrix4fv(glGetUniformLocation(shader.id, "model"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		shader.Disable();
+	}
+};
+Ground ground(assets.models.plane);
 
 void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	//	Set directional light
@@ -68,16 +84,16 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	lightScene.addPointLight(shader.id, 3, glm::vec3(18.0f, 2.0f, 14.0f), colour, attenuation);
 
 	//	Upload Uniforms
-	lightScene.uploadUniforms(modelShader);
+	lightScene.uploadUniforms(shader);
 }
 
 void Drawing::init(Camera &cam) {
 	camera = cam;
+	assets.loadAssets();
+	setLightScene(lightScene, assets.shaders.modelShader);
 
-	loadShaders();
-	loadModels();
-
-	setLightScene(lightScene, modelShader);
+	cube = new Entity(assets.models.cube, assets.shaders.modelShader, glm::vec3(0.0f, 2.0f, 0.0f));
+	cube->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
 }
 
 void uploadViewProjection(Shader shader) {
@@ -88,23 +104,24 @@ void uploadViewProjection(Shader shader) {
 	glm::mat4 proj;
 	proj = glm::perspective(camera.fov, (float)Preferences::SCREEN_WIDTH / (float)Preferences::SCREEN_HEIGHT, 0.1f, 100.0f);
 	
-	glUniform3f(glGetUniformLocation(modelShader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
-	glUniformMatrix4fv(glGetUniformLocation(modelShader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(modelShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+	glUniform3f(glGetUniformLocation(shader.id, "cameraPos"), camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
+	glUniformMatrix4fv(glGetUniformLocation(shader.id, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(shader.id, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
 	
 	shader.Disable();
 }
 
 void Drawing::render() {
-	uploadViewProjection(modelShader);
+	uploadViewProjection(assets.shaders.modelShader);
+	uploadViewProjection(assets.shaders.lampShader);
 
-	modelShader.Use();
-	modelShader.Disable();
-	nanosuit->Draw(modelShader);
+	ground.draw();
+	lightScene.drawPoints(assets.shaders.lampShader, assets.models.cube);
+	Entities::drawEntities();
 }
 
 void Drawing::cleanup()
 {
-	delete(nanosuit);
+	Entities::deleteEntities;
+	assets.clean();
 }
-

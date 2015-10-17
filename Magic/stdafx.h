@@ -33,9 +33,9 @@
 #include "Drawing.h"
 #include "Preferences.h"
 #include "Camera.h"
-#include "Lighting.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Lighting.h"
 #include "Entity.h"
 #include "Assets.h"
 

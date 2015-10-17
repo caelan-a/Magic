@@ -8,17 +8,18 @@ public:
 		glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	} transform;
 
+	Shader defaultShader;
 	Model* model = nullptr;
 
-	Entity(Model* model, glm::vec3 position) {
-		this->model = model;
-		this->transform.position = position;
-	}
+	void setScale(glm::vec3 scale);
 
+	Entity(Model* model, Shader shader, glm::vec3 position);
 	void draw(Shader shader);
-
-	glm::mat4 modelMatrix;
 	void uploadModelMatrix(Shader shader);
-
 };
 
+namespace Entities {
+	extern std::vector<Entity*> entities;
+	void drawEntities();
+	void deleteEntities();
+};

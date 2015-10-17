@@ -30,7 +30,13 @@ void Lighting::DirectionalLight::uploadUniforms()
 
 Lighting::LightScene::LightScene()
 {
+}
 
+void Lighting::LightScene::drawPoints(Shader shader, Model* pointLightModel)
+{
+	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+		pointLights[i].drawPoint(shader, pointLightModel);
+	}
 }
 
 void Lighting::LightScene::setDirectionalLight(GLuint shaderID, glm::vec3 direction, Colour colour)
@@ -66,6 +72,18 @@ Lighting::PointLight::PointLight()
 {
 }
 
+void Lighting::PointLight::drawPoint(Shader shader, Model* pointLightModel)
+{
+	shader.Use();
+	glm::mat4 modelMatrix;
+	modelMatrix = glm::translate(modelMatrix, this->position);
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.id, "model"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glUniform3f(glGetUniformLocation(shader.id, "colour"),this->colour.diffuse.r, this->colour.diffuse.g, this->colour.diffuse.b);
+	shader.Disable();
+	pointLightModel->Draw(shader);
+}
+
 Lighting::DirectionalLight::DirectionalLight(GLuint shaderID, glm::vec3 direction, Colour colour)
 {
 	DirectionalLight::shaderID = shaderID;
@@ -86,4 +104,3 @@ void Lighting::LightScene::cleanup() {
 	delete(globalLight);
 	*/
 }
-

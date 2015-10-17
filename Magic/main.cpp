@@ -115,7 +115,6 @@ void init() {
 void getSystemInfo() {
 	GLint nrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-	std::cout << "Maximum number of vertex attributes supported: " << nrAttributes << std::endl;
 }
 
 void cleanup() {
