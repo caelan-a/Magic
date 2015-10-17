@@ -1,6 +1,6 @@
 #pragma once
 namespace Lighting {
-	static const int NR_POINT_LIGHTS = 4;
+	static const int NR_POINT_LIGHTS = 1;
 
 	struct Colour {
 		glm::vec3 ambient;

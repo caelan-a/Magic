@@ -13,7 +13,7 @@ GLuint loadTextureFile(std::string directory, std::string name) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	std::cout << "Loading: " << name;
+	std::cout << "Loading: " << name << std::endl;
 	
 	int width, height;
 	unsigned char* image = SOIL_load_image((directory + name).c_str(), &width, &height, 0, SOIL_LOAD_RGB);

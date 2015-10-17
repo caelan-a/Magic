@@ -15,9 +15,11 @@ void Lighting::PointLight::uploadUniforms()
 
 void Lighting::PointLight::setPosition(glm::vec3 position)
 {
+	glUseProgram(shaderID);
 	std::string id_s = std::to_string(id);
 	PointLight::position = position;
 	glUniform3f(glGetUniformLocation(shaderID, ("pointLights[" + id_s + "].position").c_str()), position.x, position.y, position.z);
+	glUseProgram(0);
 }
 
 void Lighting::DirectionalLight::uploadUniforms()

@@ -31,7 +31,7 @@ struct PointLight {
 
 uniform Material material;
 uniform DirectionalLight directionalLight;
-#define NR_POINT_LIGHTS 4 
+#define NR_POINT_LIGHTS 1 
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 uniform vec3 cameraPos;

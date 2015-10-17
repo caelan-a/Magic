@@ -9,13 +9,14 @@ Assets assets;
 Lighting::LightScene lightScene;
 
 std::vector<Entity*> cubes;
+//Entity* nanosuit;
 
 //	Function Declarations
 void createEntities();
 
 class Ground {
 public:
-	float tileSize = 4.0f;
+	float tileSize = 8.0f;
 	float groundSize = 32.0f;
 
 	void draw() {
@@ -48,7 +49,7 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 
 	glm::vec3 direction(-1.0f, -0.25f, -1.0f);
 
-	lightScene.setDirectionalLight(shader.id, direction, colour);
+	//lightScene.setDirectionalLight(shader.id, direction, colour);
 
 	//	Set 4 point lights
 	Lighting::Attenuation attenuation;
@@ -58,29 +59,11 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 
 	glm::vec3 pointColour;
 
-	pointColour = glm::vec3(1.0f, 0.0f, 0.0f);
-	colour.ambient = pointColour * 0.2f;
-	colour.diffuse = pointColour;
-	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 0, glm::vec3(18.0f, 2.0f, 10.0f), colour, attenuation);
-
-	pointColour = glm::vec3(0.0f, 1.0f, 0.0f);
-	colour.ambient = pointColour * 0.2f;
-	colour.diffuse = pointColour;
-	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 1, glm::vec3(1.0f, 2.0f, 10.0f), colour, attenuation);
-
-	pointColour = glm::vec3(0.0f, 0.0f, 1.0f);
-	colour.ambient = pointColour * 0.2f;
-	colour.diffuse = pointColour;
-	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 2, glm::vec3(1.0f, 2.0f, -15.0f), colour, attenuation);
-
-	pointColour = glm::vec3(1.0f, 0.0f, 1.0f);
-	colour.ambient = pointColour * 0.2f;
-	colour.diffuse = pointColour;
-	colour.specular = pointColour;
-	lightScene.addPointLight(shader.id, 3, glm::vec3(18.0f, 2.0f, -15.0f), colour, attenuation);
+	pointColour = glm::vec3(1.0f, 1.0f, 1.0f);
+	colour.ambient = pointColour * 0.0f;
+	colour.diffuse = pointColour * 0.8f;
+	colour.specular = pointColour * 0.5f;
+	lightScene.addPointLight(shader.id, 0, glm::vec3(5.0f, 7.0f, 10.0f), colour, attenuation);
 
 	//	Upload Uniforms
 	lightScene.uploadUniforms(shader);
@@ -94,10 +77,12 @@ void Drawing::init(Camera &cam) {
 }
 
 void createEntities() {
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 2; i++) {
 		cubes.push_back(new Entity(assets.models.cube, assets.shaders.modelShader, glm::vec3(i * 6.0f, 2.0f, -5.0f)));
 		cubes[i]->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
 	}
+	
+	//nanosuit = new Entity(assets.models.nanosuit, assets.shaders.modelShader, glm::vec3(0.0f, 0.0f, 5.0f));
 }
 
 void uploadViewProjection(Shader shader) {
@@ -116,8 +101,12 @@ void uploadViewProjection(Shader shader) {
 }
 
 void update() {
-	for (Entity* e : cubes)
-		e->rotate(glm::vec3(0.0f, 0.005f, 0.0f));
+	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
+		//lightScene.pointLights[i].setPosition(glm::vec3(lightScene.pointLights[i].position.x, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
+		//lightScene.pointLights[i].setPosition(glm::vec3(lightScene.pointLights[i].position.x, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
+		lightScene.pointLights[i].setPosition(glm::vec3(10.0f * glm::sin(glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
+	}
+
 }
 
 void Drawing::render() {
