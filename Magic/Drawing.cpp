@@ -64,7 +64,7 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 
 	glm::vec3 pointColour;
 
-	pointColour = glm::vec3(1.0f, 1.0f, 1.0f);
+	pointColour = glm::vec3(0.3f, 0.2f, 0.5f);
 	colour.ambient = pointColour * 0.1f;
 	colour.diffuse = pointColour * 0.8f;
 	colour.specular = pointColour * 1.0f;
@@ -77,7 +77,6 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 void Drawing::init() {
 	setLightScene(lightScene, assets.shaders.modelShader);
 	createEntities();
-
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -85,10 +84,11 @@ void createEntities() {
 	for (int i = 0; i < 2; i++) {
 		cubes.push_back(new Entity(assets.models.cube, assets.shaders.modelShader, glm::vec3(i * 6.0f, 2.0f, -5.0f)));
 		cubes[i]->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
-		cubes[i]->setOutline(true);
+		cubes[i]->setOutline(false);
 	}
 
 	nanosuit = new Entity(assets.models.nanosuit, assets.shaders.modelShader, glm::vec3(0.0f, 0.0f, 0.0f));
+	nanosuit->setOutline(false);
 }
 
 void uploadViewProjection(Shader shader) {
@@ -129,10 +129,15 @@ void Drawing::render() {
 	uploadViewProjection(assets.shaders.outlineShader);
 
 	update();
+	
 
+	glEnable(GL_CULL_FACE);
 	ground.draw();
 	lightScene.drawPoints(assets.shaders.lampShader, assets.models.sphere);
 	Entities::drawEntities();
+	glDisable(GL_CULL_FACE);
+
+
 }
 
 void Drawing::cleanup()
