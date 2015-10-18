@@ -133,6 +133,12 @@
     <None Include="shaders\f_outline.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\v_skybox.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\f_skybox.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Magic.rc">

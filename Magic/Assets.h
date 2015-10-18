@@ -2,6 +2,10 @@
 
 class Assets {
 public:
+	struct CubeMaps {
+		CubeMap lake;
+	} cubemaps;
+
 	struct Textures {
 		Texture splash;
 	}textures;
@@ -12,10 +16,12 @@ public:
 		Shader lampShader;
 		Shader modelShader;
 		Shader outlineShader;
+		Shader skyboxShader;
 	} shaders;
 
 	struct Models {
 		GLuint quad; // VAO for quad surface
+		GLuint box;  // VAO for box
 
 		Model* nanosuit = nullptr;
 		Model* cube = nullptr;
@@ -30,9 +36,11 @@ public:
 		loadShaders();
 		loadModels();
 		loadTextures();
+		loadCubeMaps();
 	}
 
 	void loadQuad();
+	void loadCube();
 
 	void clean() {
 		delete(models.nanosuit);
@@ -46,4 +54,5 @@ private:
 	void loadShaders();
 	void loadModels();
 	void loadTextures();
+	void loadCubeMaps();
 };

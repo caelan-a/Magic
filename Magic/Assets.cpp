@@ -47,11 +47,77 @@ void Assets::loadQuad()
 	textures.splash.loadTextureFile("data/textures/", "splash.png");
 }
 
+void Assets::loadCube()
+{
+	GLfloat vertices[] = {
+		// Positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f
+	};
+
+	GLuint VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
+	glBindVertexArray(0);
+
+	models.box = VAO;
+}
+
 void Assets::loadShaders()
 {
 	shaders.lampShader.load("shaders/v_lamp.glsl", "shaders/f_lamp.glsl");
 	shaders.modelShader.load("shaders/v_model.glsl", "shaders/f_model.glsl");
 	shaders.outlineShader.load("shaders/v_outline.glsl", "shaders/f_outline.glsl");
+	shaders.skyboxShader.load("shaders/v_skybox.glsl", "shaders/f_skybox.glsl");
 }
 
 void Assets::loadModels() {
@@ -59,10 +125,25 @@ void Assets::loadModels() {
 	models.cube = new Model("data/models/cube/textured_cube.obj");
 	models.sphere = new Model("data/models/orb/orb.obj");
 	//models.tree = new Model("data/models/tree/tree.obj");
-	models.nanosuit = new Model("data/models/nanosuit/nanosuit.obj");
+	//models.nanosuit = new Model("data/models/nanosuit/nanosuit.obj");
+	loadCube();
 }
 
 void Assets::loadTextures()
 {
 
+}
+
+void Assets::loadCubeMaps()
+{
+	std::vector<const char*> faces;
+	
+	//	Lake
+	faces.push_back("data/skyboxes/lake/right.jpg");
+	faces.push_back("data/skyboxes/lake/left.jpg");
+	faces.push_back("data/skyboxes/lake/top.jpg");
+	faces.push_back("data/skyboxes/lake/bottom.jpg");
+	faces.push_back("data/skyboxes/lake/back.jpg");
+	faces.push_back("data/skyboxes/lake/front.jpg");
+	cubemaps.lake.loadCubeMap(faces);
 }

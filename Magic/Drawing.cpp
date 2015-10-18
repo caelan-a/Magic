@@ -7,6 +7,8 @@ std::vector<Entity*> cubes;
 Entity* tree;
 Entity* nanosuit;
 
+SkyBox* lake = nullptr;
+
 float delta = 0.0f; 
 
 //	Function Declarations
@@ -46,7 +48,7 @@ public:
 
 void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	//	Set directional light
-	float luminosity = Preferences::clearColour.r;
+	float luminosity = Preferences::luminosity;
 	Lighting::Colour colour;
 	colour.ambient = glm::vec3(luminosity);
 	colour.diffuse = glm::vec3(luminosity);
@@ -54,7 +56,7 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 
 	glm::vec3 direction(-1.0f, -0.25f, -1.0f);
 
-	//lightScene.setDirectionalLight(shader.id, direction, colour);
+	lightScene.setDirectionalLight(shader.id, direction, colour);
 
 	//	Set 4 point lights
 	Lighting::Attenuation attenuation;
@@ -87,8 +89,10 @@ void createEntities() {
 		cubes[i]->setOutline(false);
 	}
 
-	nanosuit = new Entity(assets.models.nanosuit, assets.shaders.modelShader, glm::vec3(0.0f, 0.0f, 0.0f));
-	nanosuit->setOutline(false);
+	//nanosuit = new Entity(assets.models.nanosuit, assets.shaders.modelShader, glm::vec3(0.0f, 0.0f, 0.0f));
+	//nanosuit->setOutline(false);
+
+	lake = new SkyBox(assets.cubemaps.lake, assets.shaders.skyboxShader, assets.models.box);
 }
 
 void uploadViewProjection(Shader shader) {
@@ -130,6 +134,7 @@ void Drawing::render() {
 
 	update();
 	
+	lake->draw();
 
 	glEnable(GL_CULL_FACE);
 	ground.draw();
@@ -137,11 +142,11 @@ void Drawing::render() {
 	Entities::drawEntities();
 	glDisable(GL_CULL_FACE);
 
-
 }
 
 void Drawing::cleanup()
 {
+	delete(lake);
 	Entities::deleteEntities;
 	assets.clean();
 }

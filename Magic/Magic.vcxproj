@@ -196,10 +196,12 @@
     <None Include="shaders\f_lamp.glsl" />
     <None Include="shaders\f_model.glsl" />
     <None Include="shaders\f_outline.glsl" />
+    <None Include="shaders\f_skybox.glsl" />
     <None Include="shaders\f_surface.glsl" />
     <None Include="shaders\v_lamp.glsl" />
     <None Include="shaders\v_model.glsl" />
     <None Include="shaders\v_outline.glsl" />
+    <None Include="shaders\v_skybox.glsl" />
     <None Include="shaders\v_surface.glsl" />
   </ItemGroup>
   <ItemGroup>
