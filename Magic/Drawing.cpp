@@ -5,9 +5,19 @@ Lighting::LightScene lightScene;
 
 std::vector<Entity*> cubes;
 Entity* tree;
+Entity* nanosuit;
+
+float delta = 0.0f; 
 
 //	Function Declarations
 void createEntities();
+
+double lastFrame = 0.0f;
+void updateDelta() {
+	double currentTime = glfwGetTime();
+	delta = currentTime - lastFrame;
+	lastFrame = currentTime;
+}
 
 class Ground {
 public:
@@ -77,6 +87,8 @@ void createEntities() {
 		cubes[i]->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
 		cubes[i]->setOutline(true);
 	}
+
+	nanosuit = new Entity(assets.models.nanosuit, assets.shaders.modelShader, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 void uploadViewProjection(Shader shader) {
@@ -94,10 +106,21 @@ void uploadViewProjection(Shader shader) {
 	shader.Disable();
 }
 
+float ticker = 0;
 void update() {
+	updateDelta();
+
 	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
-		lightScene.pointLights[i].setPosition(glm::vec3(10.0f * glm::sin(glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
+	//	lightScene.pointLights[i].setPosition(glm::vec3(10.0f * glm::sin(glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
 	}
+
+	//	Upload time to pulse outline
+	assets.shaders.outlineShader.Use();
+	ticker += delta;
+	if (ticker > 6.283)
+		ticker = 0;
+	glUniform1f(glGetUniformLocation(assets.shaders.outlineShader.id, "time"), ticker);
+	assets.shaders.outlineShader.Disable();
 }
 
 void Drawing::render() {

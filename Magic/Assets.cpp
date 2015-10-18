@@ -59,7 +59,7 @@ void Assets::loadModels() {
 	models.cube = new Model("data/models/cube/textured_cube.obj");
 	models.sphere = new Model("data/models/orb/orb.obj");
 	//models.tree = new Model("data/models/tree/tree.obj");
-	//models.nanosuit = new Model("data/models/nanosuit/nanosuit.obj");
+	models.nanosuit = new Model("data/models/nanosuit/nanosuit.obj");
 }
 
 void Assets::loadTextures()
