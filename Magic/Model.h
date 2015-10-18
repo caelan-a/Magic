@@ -6,19 +6,20 @@ public:
 		this->loadModel(path);
 	}
 	void loadModel(std::string path);
-	void Draw(Shader shader)
+	void Draw(Shader shader, bool hasOutline)
 	{
 		for (GLuint i = 0; i < this->meshes.size(); i++)
-			this->meshes[i].Draw(shader);
+			this->meshes[i].Draw(shader, hasOutline);
 	}
+	std::vector<Mesh> getMeshes();
 
 private:
-	std::vector<Mesh::Texture> textures_loaded;
+	std::vector<Texture> textures_loaded;
 	std::vector<Mesh> meshes;
 	std::string directory;
 
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Mesh::Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 };
 

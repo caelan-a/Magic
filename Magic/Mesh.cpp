@@ -10,7 +10,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 	this->setupMesh();
 }
 
-void Mesh::Draw(Shader shader)
+void Mesh::Draw(Shader shader, bool hasOutline)
 {
 	using namespace std;
 	shader.Use();
@@ -34,19 +34,56 @@ void Mesh::Draw(Shader shader)
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
 
-	glUniform1f(glGetUniformLocation(shader.id, "material.shininess"), 32.0f);
+	glUniform1f(glGetUniformLocation(shader.id, "material.shininess"), 8.0f);
 
 	// Draw mesh
-	glBindVertexArray(this->VAO);
-	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+
+	//	Write to stencil
+
+	if (!hasOutline) {
+		glBindVertexArray(this->VAO);
+		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		shader.Disable();
+	}
+	else if (hasOutline) {
+		
+		//	First render pass
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_STENCIL_TEST);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilMask(0xFF);
+
+		glBindVertexArray(this->VAO);
+		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+
+		//	Second render pass
+		shader.Disable();
+		assets.shaders.outlineShader.Use();
+		glDisable(GL_DEPTH_TEST);
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+
+		glBindVertexArray(0);
+		glStencilMask(0xFF);
+		glDisable(GL_STENCIL_TEST);
+		glEnable(GL_DEPTH_TEST);
+		assets.shaders.outlineShader.Disable();
+	}
 
 	for (GLuint i = 0; i < this->textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	shader.Disable();
+}
+
+void Mesh::setTextures(std::vector<Texture> textures)
+{
+	this->textures = textures;
 }
 
 void Mesh::setupMesh()

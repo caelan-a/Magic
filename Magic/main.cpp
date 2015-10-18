@@ -5,7 +5,6 @@
 
 //	Global Objects
 GLFWwindow* window;
-Camera camera;
 
 //	Protofunctions
 void init();
@@ -44,68 +43,23 @@ void checkInput() {
 
 }
 
-void drawSplash() {
-
-	Shader shader;
-	shader.load("shaders/v_splash.glsl", "shaders/f_splash.glsl");
-
-	shader.Use();
-
-	float vertices[]{
-		0.0f, 0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-
-		1.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f, 0.0f
-	};
-
-	GLuint vao;
-	glGenBuffers(1, &vao);
-	glBindVertexArray(vao);
-	
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	/*
-	GLuint tex;
-	glGenTextures(1, &tex);
-	int width, height;
-	unsigned char* image = SOIL_load_image("data/textures/splash.png", &width, &height, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	SOIL_free_image_data(image);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	*/
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2*sizeof(GL_FLOAT)));
-	glEnableVertexAttribArray(1);
-
-	while (!glfwWindowShouldClose(window))
-	{
-		checkInput();
-
-		glClearColor(Preferences::clearColour.r, Preferences::clearColour.g, Preferences::clearColour.b, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-}
-
 int main(int argc, char **argv) {
 	init();
+
+	// Load surface/quad resource, display splash
+	assets.loadQuad();
+	Surface splash(assets.textures.splash);
+
+	glClearColor(Preferences::clearColour.r, Preferences::clearColour.g, Preferences::clearColour.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	splash.draw();
+
 	glfwSwapBuffers(window);
-	camera = Camera();
-	Drawing::init(camera);
+	
+	assets.loadAssets();
+
+	Drawing::init();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -125,7 +79,6 @@ int main(int argc, char **argv) {
 }
 
 void init() {
-
 	if (glfwInit() != GL_TRUE) {
 		std::cout << "Failed to initialise GLFW";
 		glfwTerminate();
@@ -139,9 +92,9 @@ void init() {
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	
 	if(!Preferences::fullscreen)
-		window = glfwCreateWindow(Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT, "Magic", nullptr, nullptr);
+		window = glfwCreateWindow(Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT, "Magic3D", nullptr, nullptr);
 	else
-		window = glfwCreateWindow(Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT, "Magic", glfwGetPrimaryMonitor(), nullptr);
+		window = glfwCreateWindow(Preferences::SCREEN_WIDTH, Preferences::SCREEN_HEIGHT, "Magic3D", glfwGetPrimaryMonitor(), nullptr);
 	if (window == nullptr) {
 		std::cout << "Failed to create window";
 		glfwTerminate();
@@ -157,10 +110,6 @@ void init() {
 	}
 
 	getSystemInfo();
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_STENCIL_TEST);
-
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);

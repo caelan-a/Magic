@@ -7,18 +7,13 @@ public:
 		glm::vec2 texcoords;
 	};
 
-	struct Texture {
-		GLuint id;
-		std::string type;
-		aiString path;
-	};
-
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
 	std::vector<Texture> textures;
 
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
-	void Draw(Shader shader);
+	void Draw(Shader shader, bool hasOutline);
+	void setTextures(std::vector<Texture> textures);
 private:
 	GLuint VAO, VBO, EBO;
 	void setupMesh();

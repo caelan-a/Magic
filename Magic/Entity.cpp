@@ -20,7 +20,11 @@ void Entity::rotate(glm::vec3 rotation)
 
 void Entity::draw(Shader shader) {
 	uploadModelMatrix(shader);
-	this->model->Draw(shader);
+
+	if (hasOutline) 
+		uploadModelMatrix(assets.shaders.outlineShader);
+
+	this->model->Draw(shader, hasOutline);
 }
 
 void Entity::uploadModelMatrix(Shader shader) {
@@ -37,6 +41,11 @@ void Entity::uploadModelMatrix(Shader shader) {
 
 	glUniformMatrix4fv(glGetUniformLocation(shader.id, "model"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	shader.Disable();
+}
+
+void Entity::setOutline(bool outline)
+{
+	hasOutline = outline;
 }
 
 

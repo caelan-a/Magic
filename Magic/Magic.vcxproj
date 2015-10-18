@@ -160,6 +160,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -167,13 +168,16 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Surface.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assets.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -185,17 +189,24 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\f_lamp.glsl" />
     <None Include="shaders\f_model.glsl" />
-    <None Include="shaders\f_splash.glsl" />
+    <None Include="shaders\f_outline.glsl" />
+    <None Include="shaders\f_surface.glsl" />
     <None Include="shaders\v_lamp.glsl" />
     <None Include="shaders\v_model.glsl" />
-    <None Include="shaders\v_splash.glsl" />
+    <None Include="shaders\v_outline.glsl" />
+    <None Include="shaders\v_surface.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Magic.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="GLFW_ICON.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

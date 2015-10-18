@@ -1,17 +1,10 @@
 #include "stdafx.h"
 #include "Drawing.h"
 
-class Camera;
-extern Camera camera;
-
-Assets assets;
-
 Lighting::LightScene lightScene;
 
 std::vector<Entity*> cubes;
 Entity* tree;
-
-//Entity* nanosuit;
 
 //	Function Declarations
 void createEntities();
@@ -25,7 +18,7 @@ public:
 		for (int i = 0; i < groundSize / tileSize; i++) {
 			for (int j = 0; j < groundSize / tileSize; j++) {
 				uploadModelMatrix(assets.shaders.modelShader, glm::vec3((j * 2 * tileSize) - (groundSize), 0.0f, (i * 2 * tileSize) - (groundSize)), tileSize);
-				assets.models.plane->Draw(assets.shaders.modelShader);
+				assets.models.plane->Draw(assets.shaders.modelShader, false);
 			}
 		}
 	}
@@ -71,21 +64,19 @@ void setLightScene(Lighting::LightScene &lightScene, Shader shader) {
 	lightScene.uploadUniforms(shader);
 }
 
-void Drawing::init(Camera &cam) {
-	camera = cam;
-	assets.loadAssets();
+void Drawing::init() {
 	setLightScene(lightScene, assets.shaders.modelShader);
 	createEntities();
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 void createEntities() {
 	for (int i = 0; i < 2; i++) {
 		cubes.push_back(new Entity(assets.models.cube, assets.shaders.modelShader, glm::vec3(i * 6.0f, 2.0f, -5.0f)));
 		cubes[i]->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
+		cubes[i]->setOutline(true);
 	}
-	tree = new Entity(assets.models.tree, assets.shaders.modelShader, glm::vec3(0.0f, -0.5f, 5.0f));
-	tree->setScale(glm::vec3(2.0f, 2.0f, 2.0f));
-	//nanosuit = new Entity(assets.models.nanosuit, assets.shaders.modelShader, glm::vec3(0.0f, 0.0f, 5.0f));
 }
 
 void uploadViewProjection(Shader shader) {
@@ -105,16 +96,14 @@ void uploadViewProjection(Shader shader) {
 
 void update() {
 	for (int i = 0; i < Lighting::NR_POINT_LIGHTS; i++) {
-		//lightScene.pointLights[i].setPosition(glm::vec3(lightScene.pointLights[i].position.x, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
-		//lightScene.pointLights[i].setPosition(glm::vec3(lightScene.pointLights[i].position.x, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
 		lightScene.pointLights[i].setPosition(glm::vec3(10.0f * glm::sin(glfwGetTime()) + 3.0f, lightScene.pointLights[i].position.y, 10.0f * glm::sin(glfwGetTime()) + 3.0f));
 	}
-
 }
 
 void Drawing::render() {
 	uploadViewProjection(assets.shaders.modelShader);
 	uploadViewProjection(assets.shaders.lampShader);
+	uploadViewProjection(assets.shaders.outlineShader);
 
 	update();
 

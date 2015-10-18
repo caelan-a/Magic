@@ -83,7 +83,7 @@ void Lighting::PointLight::drawPoint(Shader shader, Model* pointLightModel)
 	glUniformMatrix4fv(glGetUniformLocation(shader.id, "model"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glUniform3f(glGetUniformLocation(shader.id, "colour"),this->colour.diffuse.r, this->colour.diffuse.g, this->colour.diffuse.b);
 	shader.Disable();
-	pointLightModel->Draw(shader);
+	pointLightModel->Draw(shader, false);
 }
 
 Lighting::DirectionalLight::DirectionalLight(GLuint shaderID, glm::vec3 direction, Colour colour)

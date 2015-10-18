@@ -30,6 +30,7 @@
 #include <tchar.h>
 
 //	Local headers
+#include "Texture.h"
 #include "Shader.h"
 #include "Drawing.h"
 #include "Preferences.h"
@@ -39,6 +40,8 @@
 #include "Lighting.h"
 #include "Entity.h"
 #include "Assets.h"
+#include "Game.h"
+#include "Surface.h"
 
 
 // TODO: reference additional headers your program requires here
